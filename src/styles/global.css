@@ -1,0 +1,419 @@
+/* ===== 全站设计系统 ===== */
+:root {
+  /* 主色：靛蓝 -> 紫 */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-accent: #8b5cf6;
+  --color-accent-2: #ec4899;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* 中性色 - 浅色模式 */
+  --bg: #fafbff;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f3f4f8;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #6b7280;
+
+  /* 渐变 */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-soft: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+  --gradient-hero: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.15), transparent 50%),
+                   radial-gradient(ellipse at bottom right, rgba(99, 102, 241, 0.12), transparent 50%);
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --shadow-md: 0 4px 12px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 12px 32px rgba(17, 24, 39, 0.12);
+  --shadow-glow: 0 8px 32px rgba(99, 102, 241, 0.25);
+
+  /* 其他 */
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --transition: 0.2s ease;
+
+  /* 字体 */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d14;
+    --bg-elevated: #141824;
+    --bg-subtle: #1a1f2e;
+    --border: #242b3d;
+    --border-strong: #2e364c;
+    --text: #f3f4f6;
+    --text-muted: #c7cbd6;
+    --text-subtle: #8b93a7;
+    --gradient-soft: linear-gradient(135deg, #1a1f2e 0%, #1f1a2e 100%);
+    --gradient-hero: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.25), transparent 50%),
+                     radial-gradient(ellipse at bottom right, rgba(99, 102, 241, 0.2), transparent 50%);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--color-primary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--color-accent); }
+
+img, svg { max-width: 100%; display: block; }
+
+code {
+  font-family: var(--font-mono);
+  background: var(--bg-subtle);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+pre {
+  background: var(--bg-subtle);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+pre code { background: transparent; padding: 0; }
+
+h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; color: var(--text); }
+
+/* ===== 通用组件 ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.badge-primary {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.badge-accent {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--color-accent);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.badge-pink {
+  background: rgba(236, 72, 153, 0.1);
+  color: var(--color-accent-2);
+  border-color: rgba(236, 72, 153, 0.2);
+}
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all var(--transition);
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.prose {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: var(--text);
+  /* 中英文混排：数字与英文更舒展一些 */
+  font-feature-settings: "kern", "liga", "calt";
+  text-rendering: optimizeLegibility;
+  /* 中英文之间自动加空隙效果（靠段落间距与行距营造） */
+  word-spacing: 0.02em;
+}
+
+/* 标题层级：更清晰的视觉节奏 */
+.prose h1 {
+  font-size: 2.1rem;
+  margin: 2.2rem 0 1.2rem;
+  letter-spacing: -0.01em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.prose h2 {
+  font-size: 1.55rem;
+  margin: 2.4rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.005em;
+  scroll-margin-top: 88px;
+}
+.prose h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 1.1em;
+  vertical-align: -0.18em;
+  margin-right: 0.6rem;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+}
+.prose h3 {
+  font-size: 1.2rem;
+  margin: 1.8rem 0 0.8rem;
+  color: var(--text);
+  scroll-margin-top: 88px;
+}
+.prose h4 {
+  font-size: 1.05rem;
+  margin: 1.4rem 0 0.6rem;
+  color: var(--text-muted);
+}
+
+/* 段落与基础元素 */
+.prose p {
+  margin: 1rem 0;
+  color: var(--text-muted);
+}
+.prose strong { color: var(--text); font-weight: 700; }
+.prose em { color: var(--text); }
+.prose hr {
+  border: none;
+  height: 1px;
+  margin: 2.5rem 0;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+}
+.prose a {
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(99, 102, 241, 0.4);
+  transition: all var(--transition);
+}
+.prose a:hover {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+  border-bottom-style: solid;
+}
+
+/* 列表 */
+.prose ul, .prose ol {
+  margin: 1rem 0;
+  padding-left: 1.4rem;
+  color: var(--text-muted);
+}
+.prose li { margin: 0.45rem 0; padding-left: 0.25rem; }
+.prose ul > li::marker { color: var(--color-primary); }
+.prose ol > li::marker { color: var(--color-accent); font-weight: 700; }
+
+/* 引用 */
+.prose blockquote {
+  position: relative;
+  border-left: 4px solid transparent;
+  border-image: var(--gradient-primary) 1;
+  padding: 0.8rem 1.2rem 0.8rem 1.3rem;
+  background: var(--gradient-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 1.4rem 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.prose blockquote p { margin: 0.4rem 0; }
+.prose blockquote p:first-child { margin-top: 0; }
+.prose blockquote p:last-child { margin-bottom: 0; }
+
+/* 行内代码 */
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.15em 0.45em;
+  border-radius: 5px;
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--color-primary);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  white-space: nowrap;
+}
+
+/* 代码块 */
+.prose pre {
+  margin: 1.4rem 0;
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--radius-sm);
+  background: #1c2128 !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  white-space: pre;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* ===== 表格：重点优化 ===== */
+.prose table {
+  width: 100%;
+  margin: 1.6rem 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.95rem;
+  background: var(--bg-elevated);
+}
+.prose table thead {
+  background: var(--gradient-soft);
+}
+.prose table thead th {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.prose table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  vertical-align: top;
+}
+.prose table tbody tr:last-child td { border-bottom: none; }
+.prose table tbody tr:nth-child(even) { background: var(--bg-subtle); }
+.prose table tbody tr:hover { background: rgba(99, 102, 241, 0.05); }
+.prose table tbody td:first-child { color: var(--text); font-weight: 600; }
+
+/* 表格在窄屏下可横向滚动 */
+.prose .table-wrapper,
+.prose figure.table-container {
+  overflow-x: auto;
+  margin: 1.6rem 0;
+}
+
+/* 图片 */
+.prose img {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  margin: 1.5rem auto;
+}
+.prose figcaption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+  margin-top: 0.6rem;
+}
+
+/* ===== 数学公式（KaTeX） ===== */
+.prose .katex { font-size: 1.05em; }
+.prose .katex-display {
+  margin: 1.6rem 0;
+  padding: 1rem 1.2rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.prose .katex-display > .katex {
+  font-size: 1.1em;
+  color: var(--text);
+}
+
+/* 暗色模式下：代码块保持暗色不变，但行内代码与表格略调 */
+@media (prefers-color-scheme: dark) {
+  .prose :not(pre) > code {
+    background: rgba(139, 92, 246, 0.15);
+    color: #c4b5fd;
+    border-color: rgba(139, 92, 246, 0.25);
+  }
+  .prose table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+  .prose table tbody tr:hover { background: rgba(139, 92, 246, 0.08); }
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .prose { font-size: 0.98rem; line-height: 1.8; }
+  .prose h1 { font-size: 1.7rem; }
+  .prose h2 { font-size: 1.35rem; }
+  .prose h3 { font-size: 1.1rem; }
+  .prose table { font-size: 0.85rem; }
+  .prose table thead th,
+  .prose table tbody td { padding: 0.55rem 0.7rem; }
+}

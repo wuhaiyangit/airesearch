@@ -1,0 +1,206 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+// 示例数据：可替换为从 Markdown 或 API 读取
+const newsItems = [
+  {
+    date: '2026-05-08',
+    category: 'LLM',
+    source: 'DeepSeek',
+    title: 'DeepSeek-R2 正式发布，推理效率再提升 40%',
+    summary: '新一代推理模型在 MATH、AIME 等基准上取得 SOTA，推理成本下降 35%。',
+    tags: ['推理模型', '数学', '开源'],
+  },
+  {
+    date: '2026-05-07',
+    category: '推荐系统',
+    source: 'Meta',
+    title: 'Meta 发布 HSTU-v2：生成式推荐在生产环境的大规模落地',
+    summary: '基于 HSTU 架构的第二代生成式推荐系统，在 Instagram 上实现端到端训练。',
+    tags: ['生成式推荐', 'HSTU', '工业落地'],
+  },
+  {
+    date: '2026-05-06',
+    category: '多模态',
+    source: 'Google',
+    title: 'Gemini 2.5 Ultra 展示跨模态长推理能力',
+    summary: '在 1M token 上下文中对视频、代码、文档进行联合推理。',
+    tags: ['多模态', '长上下文'],
+  },
+  {
+    date: '2026-05-05',
+    category: 'AI Agent',
+    source: 'Anthropic',
+    title: 'Claude Agents 推出自主工具链编排框架',
+    summary: '支持 Agent 在无人监督下完成 24 小时以上的长任务。',
+    tags: ['Agent', '工具调用'],
+  },
+  {
+    date: '2026-05-03',
+    category: '开源',
+    source: 'HuggingFace',
+    title: 'HuggingFace 推出 OpenRecSys：首个开源生成式推荐基准',
+    summary: '包含 8 个数据集、12 个 baseline 模型与统一评测协议。',
+    tags: ['开源', '基准'],
+  },
+];
+
+const categories = ['全部', 'LLM', '推荐系统', '多模态', 'AI Agent', '开源'];
+---
+
+<SiteLayout title="学术最前沿 · Research.Lab">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">🚀 每日更新</span>
+      <h1>学术最前沿</h1>
+      <p>追踪 AI、LLM、推荐系统等领域的行业新闻与研究动态。</p>
+    </div>
+  </section>
+
+  <section class="container page-body">
+    <!-- 分类筛选 -->
+    <div class="filters">
+      {categories.map((c, i) => (
+        <button class:list={['filter-btn', { active: i === 0 }]}>{c}</button>
+      ))}
+    </div>
+
+    <!-- 时间线列表 -->
+    <div class="timeline">
+      {newsItems.map(item => (
+        <article class="news-card">
+          <div class="news-meta">
+            <time class="news-date">{item.date}</time>
+            <span class="badge badge-primary">{item.category}</span>
+            <span class="news-source">via {item.source}</span>
+          </div>
+          <h3 class="news-title">{item.title}</h3>
+          <p class="news-summary">{item.summary}</p>
+          <div class="news-tags">
+            {item.tags.map(t => <span class="chip">#{t}</span>)}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="load-more">
+      <button class="btn btn-ghost">加载更多 ↓</button>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .page-header {
+    padding: 4rem 0 3rem;
+    background: var(--gradient-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .kicker {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+  }
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .page-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+  .page-body { padding: 3rem 1.5rem; }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .filter-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .filter-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  .filter-btn.active {
+    background: var(--gradient-primary);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .news-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .news-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+  }
+
+  .news-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+  }
+  .news-date {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+  }
+  .news-source {
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+  }
+  .news-title {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .news-summary {
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+  .news-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .chip {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    color: var(--text-subtle);
+  }
+
+  .load-more {
+    text-align: center;
+    margin-top: 2.5rem;
+  }
+</style>

@@ -1,0 +1,180 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const books = [
+  {
+    href: '/books/genrec',
+    slug: 'genrec',
+    status: '连载中',
+    title: '生成式推荐',
+    subtitle: 'Generative Recommendations: From ID-based to Sequential Generation',
+    desc: '系统性梳理生成式推荐的理论基础、代表性工作、工业实践与未来方向。从 HSTU、TIGER 到 LLM-based 推荐，一本书讲清楚范式迁移的全貌。',
+    progress: 15,
+    chapters: 20,
+    cover: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
+  },
+  {
+    href: '#',
+    slug: 'llm-system',
+    status: '构思中',
+    title: 'LLM 系统设计',
+    subtitle: 'Systems for Large Language Models',
+    desc: '从推理引擎、KV Cache、量化、分布式训练到在线服务，覆盖 LLM 系统的工程全栈。',
+    progress: 0,
+    chapters: 15,
+    cover: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+  },
+];
+---
+
+<SiteLayout title="内容创作 · Research.Lab">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">✍️ 原创书籍</span>
+      <h1>内容创作</h1>
+      <p>把零散的研究笔记沉淀成系统化的长篇内容。第一本书：《生成式推荐》。</p>
+    </div>
+  </section>
+
+  <section class="container book-section">
+    <div class="book-grid">
+      {books.map(book => (
+        <a href={book.href} class="book-card">
+          <div class="book-cover" style={`background: ${book.cover}`}>
+            <div class="cover-title">{book.title}</div>
+            <div class="cover-sub">{book.subtitle}</div>
+            <span class:list={['book-status', book.status === '连载中' ? 'status-live' : 'status-draft']}>
+              {book.status}
+            </span>
+          </div>
+          <div class="book-body">
+            <h3>{book.title}</h3>
+            <p>{book.desc}</p>
+            <div class="book-progress">
+              <div class="progress-info">
+                <span>已完成</span>
+                <span>{book.progress} / {book.chapters} 章</span>
+              </div>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  style={`width: ${(book.progress / book.chapters) * 100}%`}
+                ></div>
+              </div>
+            </div>
+            <span class="book-cta">开始阅读 →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .page-header {
+    padding: 4rem 0 3rem;
+    background: var(--gradient-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .kicker {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent-2);
+    margin-bottom: 1rem;
+  }
+  .page-header h1 { font-size: 2.5rem; margin-bottom: 0.6rem; }
+  .page-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+  .book-section { padding: 3rem 1.5rem; }
+
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  .book-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    color: var(--text);
+    transition: all var(--transition);
+  }
+  .book-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+  }
+
+  .book-cover {
+    padding: 2.5rem 1.8rem;
+    color: #fff;
+    position: relative;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .cover-title {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .cover-sub {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    font-style: italic;
+  }
+  .book-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .status-live { background: rgba(255, 255, 255, 0.25); color: #fff; }
+  .status-draft { background: rgba(0, 0, 0, 0.25); color: #fff; }
+
+  .book-body { padding: 1.6rem; }
+  .book-body h3 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+  .book-body p { color: var(--text-muted); margin-bottom: 1.2rem; font-size: 0.92rem; }
+
+  .book-progress { margin-bottom: 1rem; }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-subtle);
+    margin-bottom: 0.4rem;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--bg-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+  .book-cta {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+</style>

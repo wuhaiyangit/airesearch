@@ -1,0 +1,244 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const recentIpos = [
+  { code: '02517.HK', name: '某生物科技', date: '2026-05-10', subscribe: '128x', firstDay: '+42%', result: '盈利' },
+  { code: '01988.HK', name: '某新消费', date: '2026-05-06', subscribe: '56x', firstDay: '+18%', result: '盈利' },
+  { code: '02190.HK', name: '某 SaaS', date: '2026-05-02', subscribe: '8x', firstDay: '-6%', result: '亏损' },
+  { code: '02133.HK', name: '某新能源', date: '2026-04-28', subscribe: '210x', firstDay: '+95%', result: '盈利' },
+];
+---
+
+<SiteLayout title="港股打新研究 · Research.Lab">
+  <section class="page-header">
+    <div class="container">
+      <a href="/research" class="back">← 返回其他研究</a>
+      <span class="kicker">💰 量化研究</span>
+      <h1>港股打新研究</h1>
+      <p>系统化跟踪港股新股申购机会，沉淀数据驱动的打新策略。</p>
+    </div>
+  </section>
+
+  <section class="container metric-row">
+    <div class="metric">
+      <div class="metric-val success">+18.5%</div>
+      <div class="metric-key">过去 12 月年化</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">68%</div>
+      <div class="metric-key">首日上涨占比</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">42</div>
+      <div class="metric-key">跟踪标的数</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">3.2x</div>
+      <div class="metric-key">平均申购倍数</div>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2 class="sec-h2">策略概要</h2>
+    <div class="strategy">
+      <div class="strat-card">
+        <span class="step">01</span>
+        <h4>基本面筛选</h4>
+        <p>剔除财务异常、同业估值过高、承销商质量差的发行。</p>
+      </div>
+      <div class="strat-card">
+        <span class="step">02</span>
+        <h4>热度跟踪</h4>
+        <p>综合暗盘成交、孖展倍数、朋友圈热度做动态加权。</p>
+      </div>
+      <div class="strat-card">
+        <span class="step">03</span>
+        <h4>中签优化</h4>
+        <p>根据历史数据测算最优申购手数与账户分配策略。</p>
+      </div>
+      <div class="strat-card">
+        <span class="step">04</span>
+        <h4>首日卖出规则</h4>
+        <p>基于波动率与买盘强度，设置动态止盈止损。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2 class="sec-h2">最近案例</h2>
+    <div class="table-wrap">
+      <table class="ipo-table">
+        <thead>
+          <tr>
+            <th>代码</th>
+            <th>名称</th>
+            <th>上市日</th>
+            <th>超额认购</th>
+            <th>首日表现</th>
+            <th>结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentIpos.map(ipo => (
+            <tr>
+              <td class="mono">{ipo.code}</td>
+              <td>{ipo.name}</td>
+              <td class="mono">{ipo.date}</td>
+              <td>{ipo.subscribe}</td>
+              <td class:list={['mono', ipo.firstDay.startsWith('+') ? 'up' : 'down']}>
+                {ipo.firstDay}
+              </td>
+              <td>
+                <span class:list={['badge', ipo.result === '盈利' ? 'badge-success' : 'badge-danger']}>
+                  {ipo.result}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="container note">
+    <div class="note-box">
+      <strong>⚠️ 免责声明</strong>
+      <p>本页内容仅为研究笔记与历史数据复盘，不构成任何投资建议。市场有风险，入市需谨慎。</p>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .page-header {
+    padding: 3rem 0 2.5rem;
+    background: var(--gradient-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .back {
+    display: inline-block;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .back:hover { color: var(--color-primary); }
+  .page-header .kicker {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-success);
+    margin-bottom: 1rem;
+  }
+  .page-header h1 { font-size: 2.5rem; margin-bottom: 0.6rem; }
+  .page-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    padding: 2rem 1.5rem;
+    margin-top: -1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .metric {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+  }
+  .metric-val {
+    font-size: 1.7rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.2rem;
+  }
+  .metric-val.success {
+    background: none;
+    -webkit-text-fill-color: var(--color-success);
+    color: var(--color-success);
+  }
+  .metric-key { font-size: 0.85rem; color: var(--text-subtle); }
+
+  .sec-h2 { font-size: 1.6rem; margin: 2rem 0 1.2rem; }
+
+  .strategy {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .strat-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    position: relative;
+  }
+  .step {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+  .strat-card h4 { margin-bottom: 0.4rem; }
+  .strat-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .ipo-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-elevated);
+  }
+  .ipo-table th, .ipo-table td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .ipo-table th {
+    background: var(--bg-subtle);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-subtle);
+  }
+  .ipo-table tr:last-child td { border-bottom: none; }
+  .ipo-table tr:hover { background: var(--bg-subtle); }
+  .mono { font-family: var(--font-mono); font-size: 0.9rem; }
+  .up { color: var(--color-success); font-weight: 600; }
+  .down { color: #ef4444; font-weight: 600; }
+
+  .badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+  .badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .note { padding-bottom: 3rem; }
+  .note-box {
+    padding: 1.2rem 1.4rem;
+    background: rgba(245, 158, 11, 0.08);
+    border-left: 4px solid var(--color-warning);
+    border-radius: var(--radius-sm);
+  }
+  .note-box strong { color: var(--color-warning); }
+  .note-box p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+</style>

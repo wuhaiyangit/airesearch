@@ -1,0 +1,79 @@
+---
+import BookLayout from '../../../layouts/BookLayout.astro';
+---
+
+<BookLayout title="引言" bookTitle="生成式推荐" bookSlug="genrec">
+  <header class="book-intro">
+    <span class="badge badge-accent">Volume 01 · 连载中</span>
+    <h1>生成式推荐</h1>
+    <p class="subtitle">
+      Generative Recommendations: From ID-based to Sequential Generation
+    </p>
+    <div class="author-line">
+      作者笔记 · 持续更新中 · 欢迎反馈
+    </div>
+  </header>
+
+  <section>
+    <h2>📖 关于本书</h2>
+    <p>
+      近两年，推荐系统正在经历一场静悄悄的范式革命：从以 ID embedding + 判别式排序为核心的传统方案，
+      转向以序列建模、自回归生成为核心的「生成式推荐」（Generative Recommenders）。
+      这一转变不仅仅是模型结构的变化，更是对「推荐」这一任务的重新定义。
+    </p>
+    <p>
+      本书尝试系统地梳理这一趋势：从背景动机、代表性工作（HSTU、TIGER、LLM-based Rec）、
+      到工业落地经验与未来方向。希望能为研究者和工程师提供一个清晰的路线图。
+    </p>
+  </section>
+
+  <section>
+    <h2>🎯 本书面向谁</h2>
+    <ul>
+      <li>对推荐系统前沿感兴趣的研究者与工程师</li>
+      <li>已有传统推荐系统基础，希望了解生成式范式的开发者</li>
+      <li>正在思考 LLM 如何与推荐系统结合的产品设计者</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧭 章节导航</h2>
+    <p>点击左侧目录可跳转到对应章节。建议按顺序阅读，但每一章也都可以独立理解。</p>
+  </section>
+
+  <div class="cta-row">
+    <a href="/books/genrec/chapters/chapter01" class="btn btn-primary">开始阅读第 1 章 →</a>
+    <a href="/papers" class="btn btn-ghost">查看相关论文</a>
+  </div>
+</BookLayout>
+
+<style>
+  .book-intro {
+    padding: 1rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .book-intro h1 {
+    font-size: 2.5rem;
+    margin: 0.8rem 0 0.4rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+  .author-line {
+    font-size: 0.9rem;
+    color: var(--text-subtle);
+  }
+  .cta-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+</style>
