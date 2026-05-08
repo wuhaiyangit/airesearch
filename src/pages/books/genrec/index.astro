@@ -1,5 +1,6 @@
 ---
 import BookLayout from '../../../layouts/BookLayout.astro';
+import { url } from '../../../utils/url';
 ---
 
 <BookLayout title="引言" bookTitle="生成式推荐" bookSlug="genrec">
@@ -42,8 +43,8 @@ import BookLayout from '../../../layouts/BookLayout.astro';
   </section>
 
   <div class="cta-row">
-    <a href="/books/genrec/chapters/chapter01" class="btn btn-primary">开始阅读第 1 章 →</a>
-    <a href="/papers" class="btn btn-ghost">查看相关论文</a>
+    <a href={url('/books/genrec/chapters/chapter01')} class="btn btn-primary">开始阅读第 1 章 →</a>
+    <a href={url('/papers')} class="btn btn-ghost">查看相关论文</a>
   </div>
 </BookLayout>
 

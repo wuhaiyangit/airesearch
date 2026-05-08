@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
 
 const recentIpos = [
   { code: '02517.HK', name: '某生物科技', date: '2026-05-10', subscribe: '128x', firstDay: '+42%', result: '盈利' },
@@ -12,7 +13,7 @@ const recentIpos = [
 <SiteLayout title="港股打新研究 · Research.Lab">
   <section class="page-header">
     <div class="container">
-      <a href="/research" class="back">← 返回其他研究</a>
+      <a href={url('/research')} class="back">← 返回其他研究</a>
       <span class="kicker">💰 量化研究</span>
       <h1>港股打新研究</h1>
       <p>系统化跟踪港股新股申购机会，沉淀数据驱动的打新策略。</p>

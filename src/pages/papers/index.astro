@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
 
 const categories = [
   {
@@ -50,7 +51,7 @@ const categories = [
       <h1>学术论文研读</h1>
       <p>分门别类地梳理重要论文，逐篇拆解核心贡献、方法细节与实验结论。</p>
       <div class="header-actions">
-        <a href="/papers/trends" class="btn btn-primary">📈 查看研究趋势</a>
+        <a href={url('/papers/trends')} class="btn btn-primary">📈 查看研究趋势</a>
         <a href="#categories" class="btn btn-ghost">浏览分类 ↓</a>
       </div>
     </div>

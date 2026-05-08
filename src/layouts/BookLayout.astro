@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
+import { url } from '../utils/url';
 
 export interface Props {
   title?: string;
@@ -27,15 +28,29 @@ const chapters = Object.entries(chapterModules)
 
 const pathname = Astro.url.pathname;
 const nav = [
-  { href: '/', label: '首页' },
-  { href: '/frontier', label: '学术最前沿' },
-  { href: '/papers', label: '论文研读' },
-  { href: '/books', label: '内容创作' },
-  { href: '/research', label: '其他研究' },
+  { href: url('/'), label: '首页' },
+  { href: url('/frontier'), label: '学术最前沿' },
+  { href: url('/papers'), label: '论文研读' },
+  { href: url('/books'), label: '内容创作' },
+  { href: url('/research'), label: '其他研究' },
 ];
+const base = import.meta.env.BASE_URL;
 function isActive(href: string) {
-  if (href === '/') return pathname === '/';
-  return pathname.startsWith(href);
+  const rootHref = base.endsWith('/') ? base : base + '/';
+  const rootPath = pathname.endsWith('/') ? pathname : pathname + '/';
+  if (href === rootHref || href === rootHref.slice(0, -1)) {
+    return rootPath === rootHref;
+  }
+  const normHref = href.endsWith('/') ? href : href + '/';
+  return rootPath.startsWith(normHref);
+}
+
+const bookHomeHref = url(`/books/${bookSlug}`);
+function tocActive(linkUrl: string | undefined): boolean {
+  if (!linkUrl) return false;
+  const a = pathname.endsWith('/') ? pathname : pathname + '/';
+  const b = linkUrl.endsWith('/') ? linkUrl : linkUrl + '/';
+  return a === b;
 }
 ---
 
@@ -44,13 +59,13 @@ function isActive(href: string) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
   <title>{title} · {bookTitle}</title>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-container">
-      <a class="brand" href="/">
+      <a class="brand" href={url('/')}>
         <span class="brand-logo">∑</span>
         <span class="brand-text">Research<span class="brand-dot">.</span>Lab</span>
       </a>
@@ -67,7 +82,7 @@ function isActive(href: string) {
   <div class="book-wrap">
     <aside class="sidebar">
       <div class="sidebar-inner">
-        <a href="/books" class="back-link">← 所有书籍</a>
+        <a href={url('/books')} class="back-link">← 所有书籍</a>
         <div class="book-title-box">
           <div class="book-label">当前阅读</div>
           <h2 class="book-title">{bookTitle}</h2>
@@ -76,14 +91,14 @@ function isActive(href: string) {
           <div class="toc-title">目录</div>
           <ul>
             <li>
-              <a href={`/books/${bookSlug}`} class:list={['toc-link', { active: pathname === `/books/${bookSlug}` || pathname === `/books/${bookSlug}/` }]}>
+              <a href={bookHomeHref} class:list={['toc-link', { active: tocActive(bookHomeHref) }]}>
                 <span class="toc-num">0</span>
                 <span>引言</span>
               </a>
             </li>
             {chapters.map((ch, i) => (
               <li>
-                <a href={ch.url} class:list={['toc-link', { active: ch.url && pathname.startsWith(ch.url) }]}>
+                <a href={ch.url} class:list={['toc-link', { active: tocActive(ch.url) }]}>
                   <span class="toc-num">{String(i + 1).padStart(2, '0')}</span>
                   <span>{ch.title}</span>
                 </a>

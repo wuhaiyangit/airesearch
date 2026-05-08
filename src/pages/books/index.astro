@@ -1,9 +1,10 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
 
 const books = [
   {
-    href: '/books/genrec',
+    href: url('/books/genrec'),
     slug: 'genrec',
     status: '连载中',
     title: '生成式推荐',

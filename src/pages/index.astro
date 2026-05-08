@@ -1,9 +1,10 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { url } from '../utils/url';
 
 const sections = [
   {
-    href: '/frontier',
+    href: url('/frontier'),
     icon: '🚀',
     tag: '每日更新',
     tagClass: 'badge-primary',
@@ -12,7 +13,7 @@ const sections = [
     highlights: ['行业新闻', '研究动态', '热点追踪'],
   },
   {
-    href: '/papers',
+    href: url('/papers'),
     icon: '📄',
     tag: '深度研读',
     tagClass: 'badge-accent',
@@ -21,7 +22,7 @@ const sections = [
     highlights: ['分类索引', '逐篇精读', '趋势分析'],
   },
   {
-    href: '/books',
+    href: url('/books'),
     icon: '✍️',
     tag: '原创内容',
     tagClass: 'badge-pink',
@@ -30,7 +31,7 @@ const sections = [
     highlights: ['生成式推荐', '连载更新', '技术深度'],
   },
   {
-    href: '/research',
+    href: url('/research'),
     icon: '🔬',
     tag: '杂项研究',
     tagClass: 'badge-primary',
@@ -62,8 +63,8 @@ const latest = [
         一个属于研究者的、干净且长期更新的知识空间。
       </p>
       <div class="hero-actions">
-        <a href="/papers" class="btn btn-primary">开始阅读论文 →</a>
-        <a href="/books/genrec" class="btn btn-ghost">查看《生成式推荐》</a>
+        <a href={url('/papers')} class="btn btn-primary">开始阅读论文 →</a>
+        <a href={url('/books/genrec')} class="btn btn-ghost">查看《生成式推荐》</a>
       </div>
       <div class="hero-stats">
         <div class="stat"><div class="stat-num">4</div><div class="stat-label">内容板块</div></div>

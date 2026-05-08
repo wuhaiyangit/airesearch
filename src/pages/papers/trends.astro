@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
 
 const trends = [
   {
@@ -47,7 +48,7 @@ const hotTopics = [
 <SiteLayout title="学术研究趋势 · Research.Lab">
   <section class="page-header">
     <div class="container">
-      <a href="/papers" class="back">← 返回论文研读</a>
+      <a href={url('/papers')} class="back">← 返回论文研读</a>
       <span class="kicker">📈 趋势分析</span>
       <h1>学术研究趋势</h1>
       <p>汇总近两年值得关注的研究主线与新兴方向。</p>

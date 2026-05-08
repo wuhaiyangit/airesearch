@@ -5,9 +5,10 @@ import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://wuhaiyangit.github.io',
+  base: '/airesearch',
+  trailingSlash: 'ignore',
   markdown: {
-    site: "https://wuhaiyangit.github.io",
-    base: "/airesearch/",   // 👈 必须前后都有斜杠！
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
