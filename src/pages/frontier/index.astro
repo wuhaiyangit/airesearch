@@ -1,7 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 
-// 示例数据：可替换为从 Markdown 或 API 读取
+// 文章数据（从markdown文件中提取的frontmatter信息）
 const newsItems = [
   {
     date: '2026-05-08',
@@ -10,6 +10,7 @@ const newsItems = [
     title: 'DeepSeek-R2 正式发布，推理效率再提升 40%',
     summary: '新一代推理模型在 MATH、AIME 等基准上取得 SOTA，推理成本下降 35%。',
     tags: ['推理模型', '数学', '开源'],
+    slug: 'deepseek-r2-launch'
   },
   {
     date: '2026-05-07',
@@ -18,6 +19,7 @@ const newsItems = [
     title: 'Meta 发布 HSTU-v2：生成式推荐在生产环境的大规模落地',
     summary: '基于 HSTU 架构的第二代生成式推荐系统，在 Instagram 上实现端到端训练。',
     tags: ['生成式推荐', 'HSTU', '工业落地'],
+    slug: 'meta-hstu-v2'
   },
   {
     date: '2026-05-06',
@@ -26,26 +28,13 @@ const newsItems = [
     title: 'Gemini 2.5 Ultra 展示跨模态长推理能力',
     summary: '在 1M token 上下文中对视频、代码、文档进行联合推理。',
     tags: ['多模态', '长上下文'],
-  },
-  {
-    date: '2026-05-05',
-    category: 'AI Agent',
-    source: 'Anthropic',
-    title: 'Claude Agents 推出自主工具链编排框架',
-    summary: '支持 Agent 在无人监督下完成 24 小时以上的长任务。',
-    tags: ['Agent', '工具调用'],
-  },
-  {
-    date: '2026-05-03',
-    category: '开源',
-    source: 'HuggingFace',
-    title: 'HuggingFace 推出 OpenRecSys：首个开源生成式推荐基准',
-    summary: '包含 8 个数据集、12 个 baseline 模型与统一评测协议。',
-    tags: ['开源', '基准'],
-  },
-];
+    slug: 'google-gemini-2.5'
+  }
+].sort((a, b) => new Date(b.date) - new Date(a.date)); // 按日期倒序
 
-const categories = ['全部', 'LLM', '推荐系统', '多模态', 'AI Agent', '开源'];
+// 提取所有分类
+const allCategories = [...new Set(newsItems.map(item => item.category))];
+const categories = ['全部', ...allCategories.sort()];
 ---
 
 <SiteLayout title="学术最前沿 · Research.Lab">
