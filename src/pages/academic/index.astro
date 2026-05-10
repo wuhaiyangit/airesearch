@@ -1,0 +1,259 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
+
+// 动态加载articles目录下的所有markdown文件
+const articleModules = import.meta.glob('./articles/_data/*.md', { eager: true });
+const articles = Object.entries(articleModules).map(([path, mod]) => {
+  const m = mod as { url?: string; frontmatter: any };
+  const slug = path.split('/').pop()?.replace('.md', '') || 'unknown';
+  return {
+    url: m.url || `/academic/articles/${slug}`,
+    title: m.frontmatter?.title || '未命名文章',
+    author: m.frontmatter?.author || '未知作者',
+    date: m.frontmatter?.date || '未知日期',
+    tags: m.frontmatter?.tags || [],
+    excerpt: m.frontmatter?.excerpt || '暂无摘要',
+    category: m.frontmatter?.category || 'general',
+    icon: getIconByCategory(m.frontmatter?.category || 'general')
+  };
+});
+
+// 根据分类获取图标
+function getIconByCategory(category: string): string {
+  const icons: Record<string, string> = {
+    'ai': '🤖',
+    'ml': '🧠',
+    'nlp': '💬',
+    'cv': '👁️',
+    'robotics': '🤖',
+    'general': '📰'
+  };
+  return icons[category] || '📰';
+}
+
+// 按日期排序
+const sortedArticles = articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+// 按分类分组
+const articlesByCategory = sortedArticles.reduce((acc, article) => {
+  if (!acc[article.category]) {
+    acc[article.category] = [];
+  }
+  acc[article.category].push(article);
+  return acc;
+}, {} as Record<string, typeof articles>);
+
+const categories = [
+  { id: 'ai', name: '人工智能', icon: '🤖' },
+  { id: 'ml', name: '机器学习', icon: '🧠' },
+  { id: 'nlp', name: '自然语言处理', icon: '💬' },
+  { id: 'cv', name: '计算机视觉', icon: '👁️' },
+  { id: 'robotics', name: '机器人学', icon: '🤖' },
+  { id: 'general', name: '综合资讯', icon: '📰' }
+];
+---
+
+<SiteLayout title="学术前沿 · Research.Lab">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">🎓 学术动态</span>
+      <h1>学术前沿</h1>
+      <p>追踪最新学术研究进展，分享前沿科技动态与深度分析</p>
+    </div>
+  </section>
+
+  <section class="container academic-section">
+    <div class="category-tabs">
+      {categories.map(category => (
+        <button 
+          class:list={['category-tab', { active: Object.keys(articlesByCategory).includes(category.id) }]}
+          data-category={category.id}
+        >
+          <span class="tab-icon">{category.icon}</span>
+          {category.name}
+          {articlesByCategory[category.id] && (
+            <span class="tab-count">{articlesByCategory[category.id].length}</span>
+          )}
+        </button>
+      ))}
+    </div>
+
+    <div class="articles-container">
+      {Object.entries(articlesByCategory).map(([categoryId, categoryArticles]) => (
+        <div class="category-section" data-category={categoryId}>
+          <h2 class="category-title">
+            {categories.find(c => c.id === categoryId)?.icon}
+            {categories.find(c => c.id === categoryId)?.name}
+          </h2>
+          
+          <div class="articles-grid">
+            {categoryArticles.map(article => (
+              <article class="academic-card">
+                <div class="card-header">
+                  <span class="article-icon">{article.icon}</span>
+                  <span class="article-date">{article.date}</span>
+                </div>
+                <h3 class="article-title">{article.title}</h3>
+                <p class="article-author">{article.author}</p>
+                <p class="article-excerpt">{article.excerpt}</p>
+                <div class="article-tags">
+                  {article.tags.map(tag => <span class="tag">#{tag}</span>)}
+                </div>
+                <a href={article.url} class="article-link">阅读详情 →</a>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .page-header {
+    padding: 2.5rem 0 2rem;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .page-header .kicker {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+  .page-header h1 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text); }
+  .page-header p { color: var(--text-muted); font-size: 1rem; line-height: 1.4; }
+
+  .academic-section { padding: 1.5rem 0.5rem; }
+
+  .category-tabs {
+    display: flex;
+    gap: 0.2rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .category-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.15s ease;
+  }
+  .category-tab:hover {
+    background: var(--bg-elevated);
+    border-color: var(--color-primary-light);
+  }
+  .category-tab.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+  .tab-icon { font-size: 1rem; }
+  .tab-count {
+    padding: 0.15rem 0.4rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    font-size: 0.65rem;
+  }
+
+  .category-section {
+    margin-bottom: 1.5rem;
+  }
+  .category-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.8rem;
+  }
+  .academic-card {
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .academic-card:hover {
+    border-color: var(--color-primary-light);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+  .article-icon { font-size: 1.1rem; }
+  .article-date {
+    font-size: 0.7rem;
+    color: var(--text-subtle);
+  }
+  .article-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text);
+    line-height: 1.25;
+  }
+  .article-author {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .article-excerpt {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    margin-bottom: 0.6rem;
+  }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+  }
+  .article-link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .article-link:hover {
+    text-decoration: underline;
+    color: var(--color-primary-hover);
+  }
+
+  @media (max-width: 768px) {
+    .category-tabs {
+      flex-direction: column;
+    }
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

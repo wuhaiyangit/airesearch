@@ -1,0 +1,165 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { url } from '../../../utils/url';
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob('./_data/*.md', { eager: true });
+  return Object.entries(modules).map(([path, mod]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') || 'unknown';
+    return { params: { slug } };
+  });
+}
+
+const { slug } = Astro.params;
+const modules = import.meta.glob('./_data/*.md', { eager: true });
+const entry = Object.entries(modules).find(([path]) =>
+  path.split('/').pop()?.replace('.md', '') === slug
+);
+
+if (!entry) return new Response(null, { status: 404, statusText: 'Not found' });
+
+const mod = entry[1] as { frontmatter: any; default: any };
+const { title, authors, date, tags = [], abstract, status } = mod.frontmatter;
+const Content = mod.default;
+---
+
+<SiteLayout title={`${title} · 论文研究`}>
+  <section class="paper-header">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href={url('/research')}>其他研究</a>
+        <span> / </span>
+        <span>{title}</span>
+      </nav>
+      <h1>{title}</h1>
+      <div class="paper-meta">
+        <span class="authors">作者：{authors}</span>
+        {date && <span class="date">发布日期：{date}</span>}
+      </div>
+      {tags.length > 0 && (
+        <div class="paper-tags">
+          {tags.map((tag: string) => <span class="tag">#{tag}</span>)}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="container paper-content">
+    {abstract && (
+      <div class="abstract-section">
+        <h2>摘要</h2>
+        <p>{abstract}</p>
+      </div>
+    )}
+    <div class="content-section">
+      <article class="markdown-content">
+        <Content />
+      </article>
+    </div>
+    <div class="navigation-section">
+      <a href={url('/research')} class="btn btn-primary">← 返回论文列表</a>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .paper-header {
+    padding: 2.5rem 0 2rem;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .paper-header h1 { font-size: 1.8rem; margin-bottom: 0.6rem; color: var(--text); }
+  .paper-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+  .paper-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .tag {
+    padding: 0.15rem 0.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .paper-content { padding: 2rem 1rem; max-width: 860px; margin: 0 auto; }
+  .abstract-section {
+    margin-bottom: 2rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 4px 4px 0;
+  }
+  .abstract-section h2 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .abstract-section p { color: var(--text); line-height: 1.6; margin: 0; font-size: 0.95rem; }
+
+  .content-section { margin-bottom: 2rem; }
+  .markdown-content { line-height: 1.7; color: var(--text); font-size: 0.95rem; }
+  .markdown-content :global(h2) {
+    font-size: 1.3rem;
+    margin: 2rem 0 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+  }
+  .markdown-content :global(h3) { font-size: 1.1rem; margin: 1.5rem 0 0.6rem; color: var(--text); }
+  .markdown-content :global(p) { margin-bottom: 1rem; }
+  .markdown-content :global(ul), .markdown-content :global(ol) { margin: 0.8rem 0; padding-left: 1.5rem; }
+  .markdown-content :global(li) { margin-bottom: 0.4rem; }
+  .markdown-content :global(code) {
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    font-family: monospace;
+  }
+  .markdown-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+  .markdown-content :global(th), .markdown-content :global(td) {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-light);
+    text-align: left;
+  }
+  .markdown-content :global(th) { background: var(--bg-subtle); font-weight: 600; }
+
+  .navigation-section {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .btn:hover { background: var(--color-primary-hover); }
+</style>
