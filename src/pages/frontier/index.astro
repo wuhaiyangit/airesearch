@@ -226,26 +226,53 @@ let activeTab = 'news';
       <!-- 业界最新动态 -->
       {activeTab === 'news' && (
         <div class="news-content">
-          <h2>📰 业界最新动态</h2>
-          <p class="subtitle">每日AI行业新闻、博客、社交媒体热点追踪</p>
+          <div class="news-header">
+            <h2>📰 业界最新动态</h2>
+            <p class="subtitle">每日AI行业新闻、博客、社交媒体热点追踪</p>
+            <div class="news-stats">
+              <div class="stat-item">
+                <span class="stat-number">{newsData.reduce((total, day) => total + day.items.length, 0)}</span>
+                <span class="stat-label">条动态</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{newsData.length}</span>
+                <span class="stat-label">天更新</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{new Set(newsData.flatMap(day => day.items.map(item => item.source))).size}</span>
+                <span class="stat-label">个来源</span>
+              </div>
+            </div>
+          </div>
           
-          <div class="news-timeline">
+          <div class="news-grid">
             {newsData.map(day => (
-              <div class="news-day">
-                <h3 class="day-header">{day.date}</h3>
-                <div class="news-items">
+              <div class="news-day-card">
+                <div class="day-header">
+                  <div class="date-info">
+                    <span class="date">{day.date}</span>
+                    <span class="items-count">{day.items.length}条动态</span>
+                  </div>
+                  <div class="day-actions">
+                    <button class="btn-expand">展开</button>
+                  </div>
+                </div>
+                
+                <div class="news-items-grid">
                   {day.items.map((item, index) => (
-                    <div class="news-item">
-                      <div class="news-time">{item.time}</div>
-                      <div class="news-content">
-                        <h4 class="news-title">
-                          <a href={item.link} target="_blank" rel="noopener">
-                            {item.title}
-                          </a>
-                        </h4>
-                        <div class="news-meta">
-                          <span class="news-source">{item.source}</span>
-                        </div>
+                    <div class="news-item-card">
+                      <div class="news-item-header">
+                        <span class="time-badge">{item.time}</span>
+                        <span class="source-tag">{item.source}</span>
+                      </div>
+                      <h4 class="news-title">
+                        <a href={item.link} target="_blank" rel="noopener">
+                          {item.title}
+                        </a>
+                      </h4>
+                      <div class="news-actions">
+                        <a href={item.link} target="_blank" rel="noopener" class="btn-read">阅读原文</a>
+                        <span class="read-time">3分钟阅读</span>
                       </div>
                     </div>
                   ))}
@@ -442,7 +469,17 @@ let activeTab = 'news';
     min-height: 400px;
   }
 
-  /* 业界最新动态样式 */
+  /* 业界最新动态样式 - 重新设计 */
+  .news-content {
+    padding: 2rem;
+  }
+
+  .news-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
   .news-content h2 {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
@@ -451,54 +488,155 @@ let activeTab = 'news';
 
   .subtitle {
     color: var(--text-muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     font-size: 1.1rem;
   }
 
-  .news-timeline {
+  .news-stats {
     display: flex;
-    flex-direction: column;
     gap: 2rem;
+    margin-top: 1rem;
   }
 
-  .news-day {
-    border-left: 3px solid var(--color-primary);
-    padding-left: 1.5rem;
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-subtle);
+    border-radius: var(--radius-lg);
+    min-width: 100px;
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+  }
+
+  .news-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .news-day-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition);
+  }
+
+  .news-day-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
   }
 
   .day-header {
-    font-size: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .date {
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 1rem;
     color: var(--text);
   }
 
-  .news-items {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .items-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
 
-  .news-item {
+  .day-actions {
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--bg);
+    gap: 0.5rem;
+  }
+
+  .btn-expand {
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
     border-radius: var(--radius);
-    border: 1px solid var(--border-subtle);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition);
   }
 
-  .news-time {
-    font-size: 0.9rem;
-    color: var(--text-subtle);
-    min-width: 60px;
+  .btn-expand:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .news-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .news-item-card {
+    background: var(--bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    transition: all var(--transition);
+  }
+
+  .news-item-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .news-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  .time-badge {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    border-radius: 999px;
     font-weight: 600;
+  }
+
+  .source-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    border-radius: 4px;
+    border: 1px solid var(--border-subtle);
   }
 
   .news-title {
     font-size: 1rem;
-    margin: 0 0 0.3rem 0;
+    margin: 0 0 1rem 0;
     font-weight: 600;
+    line-height: 1.4;
   }
 
   .news-title a {
@@ -510,12 +648,42 @@ let activeTab = 'news';
     color: var(--color-primary);
   }
 
-  .news-meta {
+  .news-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-read {
     font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+  }
+
+  .btn-read:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .read-time {
+    font-size: 0.75rem;
     color: var(--text-muted);
   }
 
   /* 论文精读样式 */
+  .papers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .papers-content {
+    padding: 2rem;
+  }
+
   .categories-nav {
     display: flex;
     gap: 1rem;
@@ -629,6 +797,16 @@ let activeTab = 'news';
   }
 
   /* 技术专栏样式 */
+  .columns-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .columns-content {
+    padding: 2rem;
+  }
+
   .columns-nav {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -773,6 +951,17 @@ let activeTab = 'news';
     background: var(--bg-subtle);
     border-radius: 4px;
     color: var(--text-subtle);
+  }
+
+  .author, .authors, .year {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
   .article-actions {
