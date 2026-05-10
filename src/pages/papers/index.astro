@@ -2,46 +2,40 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { url } from '../../utils/url';
 
-const categories = [
-  {
-    name: '生成式推荐',
-    desc: '从 HSTU、TIGER 到 LLM-based 推荐，生成式范式的代表性工作。',
-    count: 12,
-    color: 'purple',
-    papers: [
-      { title: 'Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations', year: 2024, venue: 'Meta' },
-      { title: 'TIGER: Generative Retrieval Meets Recommender Systems', year: 2023, venue: 'NeurIPS' },
-    ],
-  },
-  {
-    name: '大语言模型',
-    desc: 'LLM 预训练、对齐、推理、Agent 相关的核心论文。',
-    count: 24,
-    color: 'blue',
-    papers: [
-      { title: 'LLaMA 3: Open Foundation Models', year: 2024, venue: 'Meta' },
-      { title: 'Direct Preference Optimization', year: 2023, venue: 'NeurIPS' },
-    ],
-  },
-  {
-    name: '多模态',
-    desc: 'CLIP、Diffusion、视觉-语言联合建模等多模态方向。',
-    count: 8,
-    color: 'pink',
-    papers: [
-      { title: 'Learning Transferable Visual Models from Natural Language Supervision', year: 2021, venue: 'ICML' },
-    ],
-  },
-  {
-    name: '强化学习',
-    desc: 'RLHF、离线 RL、Agent 决策等 RL 相关工作。',
-    count: 6,
-    color: 'orange',
-    papers: [
-      { title: 'Proximal Policy Optimization Algorithms', year: 2017, venue: 'arXiv' },
-    ],
-  },
+// 从 _data 目录动态读取所有论文 md 文件
+const paperModules = import.meta.glob('./_data/*.md', { eager: true });
+const allPapers = Object.entries(paperModules).map(([path, mod]) => {
+  const m = mod as { frontmatter: any };
+  const slug = path.split('/').pop()?.replace('.md', '') || 'unknown';
+  return {
+    slug,
+    title: m.frontmatter?.title || '未命名论文',
+    authors: m.frontmatter?.authors || '',
+    year: m.frontmatter?.year || '',
+    venue: m.frontmatter?.venue || '',
+    category: m.frontmatter?.category || '其他',
+    abstract: m.frontmatter?.abstract || '',
+    tags: m.frontmatter?.tags || [],
+  };
+});
+
+// 分类元信息（顺序、描述、配色）
+const categoryMeta = [
+  { name: '生成式推荐', desc: '从 HSTU、TIGER 到 LLM-based 推荐，生成式范式的代表性工作。', color: 'purple' },
+  { name: '大语言模型', desc: 'LLM 预训练、对齐、推理、Agent 相关的核心论文。', color: 'blue' },
+  { name: '多模态',     desc: 'CLIP、Diffusion、视觉-语言联合建模等多模态方向。', color: 'pink' },
+  { name: '强化学习',   desc: 'RLHF、离线 RL、Agent 决策等 RL 相关工作。', color: 'orange' },
 ];
+
+// 按分类聚合
+const categories = categoryMeta.map(meta => {
+  const papers = allPapers
+    .filter(p => p.category === meta.name)
+    .sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
+  return { ...meta, count: papers.length, papers };
+}).filter(c => c.count > 0); // 过滤掉没有论文的分类
+
+const totalPapers = allPapers.length;
 ---
 
 <SiteLayout title="学术论文研读 · Research.Lab">
@@ -58,9 +52,9 @@ const categories = [
   </section>
 
   <section class="container stats-bar">
-    <div class="stat-item"><div class="stat-val">50+</div><div class="stat-key">已收录论文</div></div>
-    <div class="stat-item"><div class="stat-val">4</div><div class="stat-key">研究方向</div></div>
-    <div class="stat-item"><div class="stat-val">12</div><div class="stat-key">精读笔记</div></div>
+    <div class="stat-item"><div class="stat-val">{totalPapers}</div><div class="stat-key">已收录论文</div></div>
+    <div class="stat-item"><div class="stat-val">{categories.length}</div><div class="stat-key">研究方向</div></div>
+    <div class="stat-item"><div class="stat-val">{totalPapers}</div><div class="stat-key">精读笔记</div></div>
     <div class="stat-item"><div class="stat-val">每周</div><div class="stat-key">更新频率</div></div>
   </section>
 
@@ -77,16 +71,25 @@ const categories = [
           <ul class="paper-list">
             {cat.papers.map(p => (
               <li>
-                <a href="#" class="paper-link">
+                <a href={url(`/papers/${p.slug}`)} class="paper-link">
                   <span class="paper-title">{p.title}</span>
-                  <span class="paper-meta">{p.venue} · {p.year}</span>
+                  <span class="paper-meta">{p.venue}{p.venue && p.year ? ' · ' : ''}{p.year}</span>
                 </a>
               </li>
             ))}
           </ul>
-          <a href="#" class="cat-more">查看全部 {cat.count} 篇 →</a>
+          {cat.count > 0 && (
+            <a href={url(`/papers/${cat.papers[0].slug}`)} class="cat-more">查看全部 {cat.count} 篇 →</a>
+          )}
         </div>
       ))}
+    </div>
+
+    <div class="add-tip">
+      <strong>💡 如何添加新论文？</strong>
+      只需在 <code>src/pages/papers/_data/</code> 目录下新建一个 markdown 文件，
+      在 frontmatter 中填写 <code>title / authors / year / venue / category / abstract</code> 等字段，
+      页面会自动收录并按分类展示。
     </div>
   </section>
 </SiteLayout>
@@ -192,19 +195,22 @@ const categories = [
   .paper-list {
     list-style: none;
     margin-bottom: 1rem;
+    padding: 0;
   }
   .paper-link {
     display: block;
     padding: 0.7rem 0;
     border-bottom: 1px dashed var(--border);
     color: var(--text);
+    text-decoration: none;
   }
-  .paper-link:last-child { border-bottom: none; }
+  .paper-list li:last-child .paper-link { border-bottom: none; }
   .paper-title {
     display: block;
     font-size: 0.92rem;
     font-weight: 500;
     margin-bottom: 0.2rem;
+    line-height: 1.35;
   }
   .paper-meta {
     font-size: 0.8rem;
@@ -216,6 +222,29 @@ const categories = [
     display: inline-block;
     font-size: 0.88rem;
     font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .cat-more:hover { text-decoration: underline; }
+
+  .add-tip {
+    margin-top: 2.5rem;
+    padding: 1rem 1.2rem;
+    background: var(--bg-subtle);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .add-tip strong { color: var(--text); margin-right: 0.4rem; }
+  .add-tip code {
+    font-size: 0.85em;
+    padding: 0.1em 0.4em;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: monospace;
     color: var(--color-primary);
   }
 </style>

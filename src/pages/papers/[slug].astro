@@ -1,0 +1,225 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { url } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob('./_data/*.md', { eager: true });
+  return Object.entries(modules).map(([path, mod]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') || 'unknown';
+    return { params: { slug } };
+  });
+}
+
+const { slug } = Astro.params;
+const modules = import.meta.glob('./_data/*.md', { eager: true });
+const entry = Object.entries(modules).find(([path]) =>
+  path.split('/').pop()?.replace('.md', '') === slug
+);
+
+if (!entry) return new Response(null, { status: 404, statusText: 'Not found' });
+
+const mod = entry[1] as { frontmatter: any; default: any };
+const { title, authors, year, venue, category, abstract, tags = [] } = mod.frontmatter;
+const Content = mod.default;
+---
+
+<SiteLayout title={`${title} · 学术论文研读`}>
+  <section class="paper-header">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href={url('/papers')}>学术论文研读</a>
+        <span>›</span>
+        <span class="current-cat">{category}</span>
+        <span>›</span>
+        <span class="current-title">{title}</span>
+      </nav>
+      <div class="paper-kicker">
+        {category && <span class="badge badge-cat">{category}</span>}
+        {venue && <span class="badge">{venue}</span>}
+        {year && <span class="badge">{year}</span>}
+      </div>
+      <h1>{title}</h1>
+      {authors && <p class="authors">{authors}</p>}
+      {tags.length > 0 && (
+        <div class="tags">
+          {tags.map((tag: string) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="container paper-body">
+    {abstract && (
+      <div class="abstract-box">
+        <h2>摘要 / TL;DR</h2>
+        <p>{abstract}</p>
+      </div>
+    )}
+    <article class="paper-content">
+      <Content />
+    </article>
+    <div class="back-nav">
+      <a href={url('/papers')} class="back-btn">← 返回论文列表</a>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .paper-header {
+    padding: 2.5rem 0 2rem;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb span { color: var(--text-subtle); }
+  .current-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 30rem;
+  }
+
+  .paper-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+  }
+  .badge-cat {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  .paper-header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .authors {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: 3px;
+    color: var(--text-muted);
+  }
+
+  .paper-body { padding: 2rem 1rem; max-width: 860px; margin: 0 auto; }
+  .abstract-box {
+    padding: 1.2rem 1.5rem;
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 2rem;
+  }
+  .abstract-box h2 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .abstract-box p {
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .paper-content {
+    line-height: 1.7;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .paper-content :global(h2) {
+    font-size: 1.3rem;
+    margin: 2rem 0 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+  }
+  .paper-content :global(h3) {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.6rem;
+    color: var(--text);
+  }
+  .paper-content :global(p) { margin-bottom: 1rem; }
+  .paper-content :global(ul), .paper-content :global(ol) {
+    margin: 0.8rem 0;
+    padding-left: 1.5rem;
+  }
+  .paper-content :global(li) { margin-bottom: 0.4rem; }
+  .paper-content :global(code) {
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    font-family: monospace;
+  }
+  .paper-content :global(blockquote) {
+    border-left: 3px solid var(--border-light);
+    padding-left: 1rem;
+    color: var(--text-muted);
+    margin: 1rem 0;
+  }
+  .paper-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+  .paper-content :global(th), .paper-content :global(td) {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-light);
+    text-align: left;
+  }
+  .paper-content :global(th) { background: var(--bg-subtle); font-weight: 600; }
+
+  .back-nav {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+  }
+  .back-btn {
+    font-size: 0.88rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .back-btn:hover { text-decoration: underline; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+</style>
