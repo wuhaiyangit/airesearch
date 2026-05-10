@@ -1,0 +1,241 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+
+// 论文数据 - 实际应从各分类目录下的markdown文件读取
+const paperCategories = [
+  {
+    id: 'generative-recall',
+    name: '生成式召回',
+    description: '基于生成式模型的召回技术研究与应用',
+    papers: [
+      {
+        title: 'HSTU: 基于Transformer的生成式召回架构',
+        authors: 'Meta Research Team',
+        link: '/frontier/papers/generative-recall/hstu-paper',
+        year: '2026',
+        abstract: '提出了一种基于Transformer的端到端生成式召回架构，在Instagram上实现大规模落地。'
+      },
+      {
+        title: 'OneRec: 统一生成式推荐框架',
+        authors: '阿里巴巴团队',
+        link: '/frontier/papers/generative-recall/onerec-paper',
+        year: '2025',
+        abstract: '将召回、排序、重排统一到单一生成式模型中，在电商场景取得显著效果提升。'
+      }
+    ]
+  },
+  {
+    id: 'generative-search',
+    name: '生成式搜索',
+    description: '生成式模型在搜索领域的应用与优化',
+    papers: [
+      {
+        title: 'SearchGPT: 基于LLM的智能搜索系统',
+        authors: 'Google Research',
+        link: '/frontier/papers/generative-search/searchgpt-paper',
+        year: '2026',
+        abstract: '利用大语言模型进行query理解、文档排序和结果生成的一体化搜索解决方案。'
+      }
+    ]
+  },
+  {
+    id: 'model-scaling',
+    name: '模型Scaling UP',
+    description: '模型规模扩展与训练优化技术',
+    papers: [
+      {
+        title: 'Scaling Laws for Large Language Models',
+        authors: 'OpenAI Research',
+        link: '/frontier/papers/model-scaling/scaling-laws',
+        year: '2024',
+        abstract: '系统性地研究了语言模型规模扩展的规律，为模型设计提供理论指导。'
+      },
+      {
+        title: 'Efficient Training of Trillion-Parameter Models',
+        authors: 'DeepSeek Research',
+        link: '/frontier/papers/model-scaling/efficient-training',
+        year: '2026',
+        abstract: '提出新的训练优化技术，显著降低万亿参数模型的训练成本。'
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout title="论文精读 · 学术最前沿">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">📄 论文精读</span>
+      <h1>业界相关论文精读</h1>
+      <p>精选AI领域重要论文，提供深度技术解析与实现分析</p>
+    </div>
+  </section>
+
+  <section class="container page-body">
+    <!-- 分类导航 -->
+    <div class="categories-nav">
+      {paperCategories.map(category => (
+        <a href={`#${category.id}`} class="category-link">
+          <span class="category-name">{category.name}</span>
+          <span class="paper-count">{category.papers.length}篇</span>
+        </a>
+      ))}
+    </div>
+
+    <!-- 论文列表 -->
+    <div class="papers-container">
+      {paperCategories.map(category => (
+        <section id={category.id} class="category-section">
+          <h2 class="category-title">{category.name}</h2>
+          <p class="category-description">{category.description}</p>
+          
+          <div class="papers-list">
+            {category.papers.map(paper => (
+              <article class="paper-card">
+                <div class="paper-header">
+                  <h3 class="paper-title">
+                    <a href={paper.link}>{paper.title}</a>
+                  </h3>
+                  <div class="paper-meta">
+                    <span class="authors">{paper.authors}</span>
+                    <span class="year">{paper.year}</span>
+                  </div>
+                </div>
+                <p class="paper-abstract">{paper.abstract}</p>
+                <div class="paper-actions">
+                  <a href={paper.link} class="btn btn-outline">阅读全文</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .categories-nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .category-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--text);
+    transition: all var(--transition);
+  }
+
+  .category-link:hover {
+    border-color: var(--color-primary);
+    background: var(--bg-subtle);
+  }
+
+  .category-name {
+    font-weight: 500;
+  }
+
+  .paper-count {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-subtle);
+    border-radius: 999px;
+    color: var(--text-subtle);
+  }
+
+  .category-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .category-section:last-child {
+    border-bottom: none;
+  }
+
+  .category-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .category-description {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .papers-list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .paper-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--transition);
+  }
+
+  .paper-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .paper-header {
+    margin-bottom: 1rem;
+  }
+
+  .paper-title {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .paper-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .paper-title a:hover {
+    color: var(--color-primary);
+  }
+
+  .paper-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .paper-abstract {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .paper-actions {
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .categories-nav {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .papers-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

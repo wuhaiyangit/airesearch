@@ -1,0 +1,287 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+
+// 技术专栏数据 - 实际应从各领域目录下的markdown文件读取
+const techColumns = [
+  {
+    id: 'llm',
+    name: 'LLM技术专栏',
+    description: '大语言模型技术深度解析与前沿探索',
+    articles: [
+      {
+        title: 'Transformer架构的演进与优化',
+        author: 'AI技术专家',
+        date: '2026-05-10',
+        link: '/frontier/columns/llm/transformer-evolution',
+        summary: '从原始Transformer到现代变体的技术演进路径分析',
+        tags: ['Transformer', '架构优化', '注意力机制']
+      },
+      {
+        title: '大模型推理优化技术详解',
+        author: '推理优化专家',
+        date: '2026-05-08',
+        link: '/frontier/columns/llm/inference-optimization',
+        summary: '深入解析大模型推理阶段的性能优化策略与实践',
+        tags: ['推理优化', '性能调优', '部署实践']
+      }
+    ]
+  },
+  {
+    id: 'multimodal',
+    name: '多模态技术专栏',
+    description: '多模态AI技术原理与应用实践',
+    articles: [
+      {
+        title: '视觉-语言多模态融合技术',
+        author: '多模态研究员',
+        date: '2026-05-09',
+        link: '/frontier/columns/multimodal/vl-fusion',
+        summary: '探索视觉与语言信息的深度融合方法与技术挑战',
+        tags: ['多模态融合', '视觉语言', '跨模态学习']
+      },
+      {
+        title: '视频理解中的时序建模技术',
+        author: '视频AI专家',
+        date: '2026-05-07',
+        link: '/frontier/columns/multimodal/video-temporal',
+        summary: '分析视频理解任务中的时序建模方法与最新进展',
+        tags: ['视频理解', '时序建模', '动作识别']
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout title="技术专栏 · 学术最前沿">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">💡 技术专栏</span>
+      <h1>技术专栏</h1>
+      <p>专业技术文章与深度技术分析，涵盖AI各领域前沿技术</p>
+    </div>
+  </section>
+
+  <section class="container page-body">
+    <!-- 专栏导航 -->
+    <div class="columns-nav">
+      {techColumns.map(column => (
+        <a href={`#${column.id}`} class="column-link">
+          <div class="column-icon">💡</div>
+          <div class="column-info">
+            <h3 class="column-name">{column.name}</h3>
+            <p class="column-description">{column.description}</p>
+            <span class="article-count">{column.articles.length}篇文章</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- 文章列表 -->
+    <div class="columns-container">
+      {techColumns.map(column => (
+        <section id={column.id} class="column-section">
+          <div class="column-header">
+            <h2 class="column-title">{column.name}</h2>
+            <p class="column-description">{column.description}</p>
+          </div>
+          
+          <div class="articles-list">
+            {column.articles.map(article => (
+              <article class="article-card">
+                <div class="article-header">
+                  <h3 class="article-title">
+                    <a href={article.link}>{article.title}</a>
+                  </h3>
+                  <div class="article-meta">
+                    <span class="author">作者：{article.author}</span>
+                    <span class="date">{article.date}</span>
+                  </div>
+                </div>
+                <p class="article-summary">{article.summary}</p>
+                <div class="article-tags">
+                  {article.tags.map(tag => (
+                    <span class="tag">#{tag}</span>
+                  ))}
+                </div>
+                <div class="article-actions">
+                  <a href={article.link} class="btn btn-outline">阅读全文</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .columns-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .column-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text);
+    transition: all var(--transition);
+  }
+
+  .column-link:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .column-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .column-info {
+    flex: 1;
+  }
+
+  .column-name {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .column-description {
+    color: var(--text-muted);
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .article-count {
+    font-size: 0.8rem;
+    color: var(--text-subtle);
+    background: var(--bg-subtle);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  .column-section {
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .column-section:last-child {
+    border-bottom: none;
+  }
+
+  .column-header {
+    margin-bottom: 2rem;
+  }
+
+  .column-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .column-description {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  .articles-list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .article-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--transition);
+  }
+
+  .article-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .article-header {
+    margin-bottom: 1rem;
+  }
+
+  .article-title {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .article-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .article-title a:hover {
+    color: var(--color-primary);
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .article-summary {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    color: var(--text-subtle);
+  }
+
+  .article-actions {
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .columns-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .column-link {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .column-icon {
+      align-self: center;
+    }
+
+    .articles-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

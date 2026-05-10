@@ -1,79 +1,51 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-
-// 文章数据（从markdown文件中提取的frontmatter信息）
-const newsItems = [
-  {
-    date: '2026-05-08',
-    category: 'LLM',
-    source: 'DeepSeek',
-    title: 'DeepSeek-R2 正式发布，推理效率再提升 40%',
-    summary: '新一代推理模型在 MATH、AIME 等基准上取得 SOTA，推理成本下降 35%。',
-    tags: ['推理模型', '数学', '开源'],
-    slug: 'deepseek-r2-launch'
-  },
-  {
-    date: '2026-05-07',
-    category: '推荐系统',
-    source: 'Meta',
-    title: 'Meta 发布 HSTU-v2：生成式推荐在生产环境的大规模落地',
-    summary: '基于 HSTU 架构的第二代生成式推荐系统，在 Instagram 上实现端到端训练。',
-    tags: ['生成式推荐', 'HSTU', '工业落地'],
-    slug: 'meta-hstu-v2'
-  },
-  {
-    date: '2026-05-06',
-    category: '多模态',
-    source: 'Google',
-    title: 'Gemini 2.5 Ultra 展示跨模态长推理能力',
-    summary: '在 1M token 上下文中对视频、代码、文档进行联合推理。',
-    tags: ['多模态', '长上下文'],
-    slug: 'google-gemini-2.5'
-  }
-].sort((a, b) => new Date(b.date) - new Date(a.date)); // 按日期倒序
-
-// 提取所有分类
-const allCategories = [...new Set(newsItems.map(item => item.category))];
-const categories = ['全部', ...allCategories.sort()];
 ---
 
 <SiteLayout title="学术最前沿 · Research.Lab">
   <section class="page-header">
     <div class="container">
-      <span class="kicker">🚀 每日更新</span>
+      <span class="kicker">🚀 学术资源中心</span>
       <h1>学术最前沿</h1>
-      <p>追踪 AI、LLM、推荐系统等领域的行业新闻与研究动态。</p>
+      <p>AI领域最新动态、论文精读与技术专栏三位一体</p>
     </div>
   </section>
 
   <section class="container page-body">
-    <!-- 分类筛选 -->
-    <div class="filters">
-      {categories.map((c, i) => (
-        <button class:list={['filter-btn', { active: i === 0 }]}>{c}</button>
-      ))}
-    </div>
+    <!-- 三部分导航 -->
+    <div class="sections-grid">
+      <!-- 业界最新动态 -->
+      <a href="/frontier/news" class="section-card">
+        <div class="section-icon">📰</div>
+        <h3>业界最新动态</h3>
+        <p>每日AI行业新闻、博客、社交媒体热点追踪</p>
+        <div class="section-stats">
+          <span class="stat">7天回顾</span>
+          <span class="stat">每日更新</span>
+        </div>
+      </a>
 
-    <!-- 时间线列表 -->
-    <div class="timeline">
-      {newsItems.map(item => (
-        <article class="news-card">
-          <div class="news-meta">
-            <time class="news-date">{item.date}</time>
-            <span class="badge badge-primary">{item.category}</span>
-            <span class="news-source">via {item.source}</span>
-          </div>
-          <h3 class="news-title">{item.title}</h3>
-          <p class="news-summary">{item.summary}</p>
-          <div class="news-tags">
-            {item.tags.map(t => <span class="chip">#{t}</span>)}
-          </div>
-        </article>
-      ))}
-    </div>
+      <!-- 论文精读 -->
+      <a href="/frontier/papers" class="section-card">
+        <div class="section-icon">📄</div>
+        <h3>论文精读</h3>
+        <p>精选论文深度解析与技术分析</p>
+        <div class="section-stats">
+          <span class="stat">3+ 类别</span>
+          <span class="stat">持续更新</span>
+        </div>
+      </a>
 
-    <div class="load-more">
-      <button class="btn btn-ghost">加载更多 ↓</button>
+      <!-- 技术专栏 -->
+      <a href="/frontier/columns" class="section-card">
+        <div class="section-icon">💡</div>
+        <h3>技术专栏</h3>
+        <p>专业技术文章与深度技术分析</p>
+        <div class="section-stats">
+          <span class="stat">2+ 领域</span>
+          <span class="stat">专家撰稿</span>
+        </div>
+      </a>
     </div>
   </section>
 </SiteLayout>
@@ -103,93 +75,77 @@ const categories = ['全部', ...allCategories.sort()];
 
   .page-body { padding: 3rem 1.5rem; }
 
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-  }
-  .filter-btn {
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition);
-  }
-  .filter-btn:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-  }
-  .filter-btn.active {
-    background: var(--gradient-primary);
-    color: #fff;
-    border-color: transparent;
+  /* 三部分导航样式 */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
   }
 
-  .timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .news-card {
+  .section-card {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.4rem 1.6rem;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
     transition: all var(--transition);
     position: relative;
-  }
-  .news-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-md);
-    transform: translateX(4px);
+    overflow: hidden;
   }
 
-  .news-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.6rem;
+  .section-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
   }
-  .news-date {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--text-subtle);
+
+  .section-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
   }
-  .news-source {
-    font-size: 0.85rem;
-    color: var(--text-subtle);
-  }
-  .news-title {
-    font-size: 1.15rem;
-    margin-bottom: 0.5rem;
+
+  .section-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
     color: var(--text);
   }
-  .news-summary {
+
+  .section-card p {
     color: var(--text-muted);
-    margin-bottom: 0.8rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
   }
-  .news-tags {
+
+  .section-stats {
     display: flex;
+    gap: 1rem;
     flex-wrap: wrap;
-    gap: 0.4rem;
   }
-  .chip {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
+
+  .stat {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
     background: var(--bg-subtle);
-    border-radius: 4px;
+    border-radius: 999px;
     color: var(--text-subtle);
   }
 
-  .load-more {
-    text-align: center;
-    margin-top: 2.5rem;
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .sections-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .section-card {
+      padding: 1.5rem;
+    }
+    
+    .section-icon {
+      font-size: 2.5rem;
+    }
   }
 </style>

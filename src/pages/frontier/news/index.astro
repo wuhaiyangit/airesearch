@@ -1,0 +1,265 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+
+// 获取URL参数
+const url = new URL(Astro.request.url);
+const page = parseInt(url.searchParams.get('page')) || 1;
+const daysPerPage = 7; // 每页显示7天
+const itemsPerDay = 5; // 每天约5条内容
+
+// 模拟数据 - 实际应从daily目录下的markdown文件读取
+const newsData = [
+  // 第1天数据
+  {
+    date: '2026-05-10',
+    items: [
+      {
+        title: 'OpenAI发布GPT-5预览版，支持多模态推理',
+        link: 'https://openai.com/blog/gpt-5-preview',
+        source: 'OpenAI Blog',
+        time: '09:00'
+      },
+      {
+        title: 'DeepSeek-R2在MATH基准上取得新SOTA',
+        link: 'https://arxiv.org/abs/2605.10001',
+        source: 'arXiv',
+        time: '11:30'
+      },
+      {
+        title: 'Meta公布HSTU-v2在Instagram的落地效果',
+        link: 'https://twitter.com/metaai/status/178901234567890',
+        source: 'Twitter',
+        time: '14:15'
+      },
+      {
+        title: 'Google Gemini 2.5展示长上下文能力',
+        link: 'https://ai.googleblog.com/2026/05/gemini-25-long-context.html',
+        source: 'Google AI Blog',
+        time: '16:45'
+      },
+      {
+        title: 'HuggingFace发布OpenRecSys基准',
+        link: 'https://huggingface.co/blog/openrecsys',
+        source: 'HuggingFace Blog',
+        time: '19:20'
+      }
+    ]
+  },
+  // 第2天数据
+  {
+    date: '2026-05-09',
+    items: [
+      {
+        title: 'Anthropic发布Claude Agents框架',
+        link: 'https://www.anthropic.com/news/claude-agents',
+        source: 'Anthropic News',
+        time: '08:30'
+      },
+      {
+        title: '微软发布新的多模态Agent架构',
+        link: 'https://arxiv.org/abs/2605.09987',
+        source: 'arXiv',
+        time: '10:45'
+      },
+      {
+        title: '阿里巴巴OneRec在电商场景落地',
+        link: 'https://mp.weixin.qq.com/s/example',
+        source: '微信公众号',
+        time: '13:20'
+      },
+      {
+        title: '字节跳动发布新一代推荐引擎',
+        link: 'https://toutiao.io/k/123456',
+        source: '开发者社区',
+        time: '15:50'
+      },
+      {
+        title: '英伟达发布新的AI推理芯片',
+        link: 'https://nvidia.com/news/ai-chip-2026',
+        source: 'NVIDIA News',
+        time: '18:10'
+      }
+    ]
+  }
+  // 更多天的数据...
+];
+
+// 计算分页数据
+const startIndex = (page - 1) * daysPerPage;
+const endIndex = startIndex + daysPerPage;
+const currentPageData = newsData.slice(startIndex, endIndex);
+const totalPages = Math.ceil(newsData.length / daysPerPage);
+---
+
+<SiteLayout title="业界最新动态 · 学术最前沿">
+  <section class="page-header">
+    <div class="container">
+      <span class="kicker">📰 业界动态</span>
+      <h1>业界最新动态</h1>
+      <p>每日AI行业新闻、博客、社交媒体热点追踪，保留最近7天内容</p>
+    </div>
+  </section>
+
+  <section class="container page-body">
+    <!-- 分页导航 -->
+    <div class="pagination">
+      <span class="pagination-info">第 {page} 页 / 共 {totalPages} 页</span>
+      <div class="pagination-controls">
+        {page > 1 && <a href={`?page=${page - 1}`} class="btn btn-outline">上一页</a>}
+        {page < totalPages && <a href={`?page=${page + 1}`} class="btn btn-primary">下一页</a>}
+      </div>
+    </div>
+
+    <!-- 时间线列表 -->
+    <div class="timeline">
+      {currentPageData.map(dayData => (
+        <div class="day-section">
+          <h2 class="day-title">{dayData.date}</h2>
+          <div class="news-list">
+            {dayData.items.map(item => (
+              <article class="news-item">
+                <div class="news-time">{item.time}</div>
+                <div class="news-content">
+                  <h3 class="news-title">
+                    <a href={item.link} target="_blank" rel="noopener">{item.title}</a>
+                  </h3>
+                  <div class="news-meta">
+                    <span class="news-source">{item.source}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- 底部分页 -->
+    <div class="pagination pagination-bottom">
+      <div class="pagination-controls">
+        {page > 1 && <a href={`?page=${page - 1}`} class="btn btn-outline">上一页</a>}
+        {page < totalPages && <a href={`?page=${page + 1}`} class="btn btn-primary">下一页</a>}
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pagination-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .pagination-controls {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .day-section {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .day-title {
+    background: var(--gradient-soft);
+    padding: 1rem 1.5rem;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .news-list {
+    padding: 0;
+  }
+
+  .news-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color var(--transition);
+  }
+
+  .news-item:hover {
+    background: var(--bg-subtle);
+  }
+
+  .news-item:last-child {
+    border-bottom: none;
+  }
+
+  .news-time {
+    flex: 0 0 60px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    margin-right: 1rem;
+  }
+
+  .news-content {
+    flex: 1;
+  }
+
+  .news-title {
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .news-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .news-title a:hover {
+    color: var(--color-primary);
+  }
+
+  .news-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .pagination-bottom {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+    padding-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .pagination {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .news-item {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .news-time {
+      flex: none;
+    }
+  }
+</style>

@@ -1,110 +1,214 @@
 # 学术最前沿栏目使用指南
 
-## 目录结构
+## 目录结构总览
 ```
 src/pages/frontier/
-├── index.astro          # 主页面，自动读取articles目录
-├── articles/            # Markdown文章目录
-│   ├── deepseek-r2-launch.md
-│   ├── meta-hstu-v2.md
-│   └── google-gemini-2.5.md
-└── (未来新增的markdown文件)
+├── index.astro              # 主页面 - 三个部分的导航
+├── news/                    # 业界最新动态
+│   ├── index.astro          # 动态列表页面
+│   └── daily/               # 每日新闻目录（未来扩展）
+├── papers/                  # 论文精读
+│   ├── index.astro          # 论文分类页面
+│   ├── generative-recall/   # 生成式召回论文
+│   ├── generative-search/   # 生成式搜索论文
+│   └── model-scaling/       # 模型Scaling UP论文
+└── columns/                 # 技术专栏
+    ├── index.astro          # 专栏导航页面
+    ├── llm/                 # LLM技术专栏
+    └── multimodal/          # 多模态技术专栏
 ```
 
-## 如何使用
+## 1. 业界最新动态（news）
 
-### 1. 新增文章
-只需在 `src/pages/frontier/articles/` 目录下创建一个新的markdown文件：
+### 功能特点
+- 分页显示，每页显示7天内容
+- 每天约5条新闻动态
+- 支持标题、链接、来源、时间信息
+- 自动按日期倒序排列
+
+### 新增内容方式
+目前采用静态数据方式，未来可扩展为动态读取markdown文件：
+
+```javascript
+// 在 src/pages/frontier/news/index.astro 中新增数据
+const newsData = [
+  {
+    date: '2026-05-11',
+    items: [
+      {
+        title: '最新AI新闻标题',
+        link: 'https://example.com/news',
+        source: '来源名称',
+        time: '09:00'
+      }
+    ]
+  }
+];
+```
+
+### 未来扩展计划
+- 创建 `daily/` 目录，按日期存放markdown文件
+- 每个markdown文件包含当天的多条新闻
+- 支持自动读取和渲染
+
+## 2. 论文精读（papers）
+
+### 功能特点
+- 按技术领域分类（生成式召回、生成式搜索、模型Scaling UP等）
+- 每篇论文包含标题、作者、年份、摘要
+- 支持分类导航和快速跳转
+
+### 新增内容方式
+在 `src/pages/frontier/papers/index.astro` 中修改 `paperCategories` 数组：
+
+```javascript
+const paperCategories = [
+  {
+    id: 'new-category',           // 新分类ID
+    name: '新分类名称',            // 分类显示名称
+    description: '分类描述',       // 分类详细描述
+    papers: [                     // 论文列表
+      {
+        title: '论文标题',
+        authors: '作者列表',
+        link: '/frontier/papers/new-category/paper-slug',
+        year: '2026',
+        abstract: '论文摘要内容'
+      }
+    ]
+  }
+];
+```
+
+### 新增论文详细页面
+为每篇论文创建对应的markdown文件：
 
 ```bash
-# 示例：创建新文章
-touch src/pages/frontier/articles/2026-05-09-anthropic-agent.md
+# 在对应分类目录下创建论文文件
+touch src/pages/frontier/papers/generative-recall/new-paper.md
 ```
 
-### 2. 文章格式
-每个markdown文件需要包含frontmatter头部信息：
-
+论文markdown文件格式：
 ```markdown
 ---
-date: 2026-05-09          # 发布日期
-category: AI Agent        # 分类（LLM、推荐系统、多模态、AI Agent、开源等）
-source: Anthropic         # 来源
+title: "论文标题"
+authors: "作者列表"
+date: "2026-05-11"
+abstract: "论文摘要"
+tags: ["标签1", "标签2"]
+---
+
+# 论文标题
+
+## 摘要
+论文详细内容...
+```
+
+## 3. 技术专栏（columns）
+
+### 功能特点
+- 按技术领域分类（LLM、多模态等）
+- 每篇文章包含标题、作者、日期、摘要、标签
+- 支持技术标签和分类筛选
+
+### 新增内容方式
+在 `src/pages/frontier/columns/index.astro` 中修改 `techColumns` 数组：
+
+```javascript
+const techColumns = [
+  {
+    id: 'new-domain',           // 新领域ID
+    name: '新领域专栏',          // 专栏名称
+    description: '专栏描述',     // 专栏详细描述
+    articles: [                  // 文章列表
+      {
+        title: '文章标题',
+        author: '作者姓名',
+        date: '2026-05-11',
+        link: '/frontier/columns/new-domain/article-slug',
+        summary: '文章摘要',
+        tags: ['标签1', '标签2']
+      }
+    ]
+  }
+];
+```
+
+### 新增专栏文章详细页面
+为每篇文章创建对应的markdown文件：
+
+```bash
+# 在对应领域目录下创建文章文件
+touch src/pages/frontier/columns/llm/new-article.md
+```
+
+文章markdown文件格式：
+```markdown
+---
 title: "文章标题"
-summary: "简短摘要"
-tags: ["标签1", "标签2"]   # 标签列表
+author: "作者姓名"
+date: "2026-05-11"
+summary: "文章摘要"
+tags: ["技术标签1", "技术标签2"]
 ---
 
-# 文章内容
-...
+# 文章标题
+
+文章详细内容...
 ```
 
-### 3. 支持的分类
-当前支持的分类（会自动从文章中提取）：
-- LLM
-- 推荐系统  
-- 多模态
-- AI Agent
-- 开源
+## 访问路径
 
-可以随时新增其他分类，系统会自动识别。
+- **主页面**: https://wuhaiyangit.github.io/airesearch/frontier/
+- **业界动态**: https://wuhaiyangit.github.io/airesearch/frontier/news/
+- **论文精读**: https://wuhaiyangit.github.io/airesearch/frontier/papers/
+- **技术专栏**: https://wuhaiyangit.github.io/airesearch/frontier/columns/
 
-### 4. 自动功能
-- **自动排序**: 文章按日期倒序排列
-- **分类筛选**: 页面顶部有分类筛选按钮
-- **标签显示**: 每篇文章显示相关标签
-- **响应式设计**: 适配桌面和移动设备
+## 部署流程
 
-## 示例文件
+1. 新增内容后，提交代码到main分支
+2. GitHub Actions会自动构建和部署
+3. 等待约2分钟构建完成
+4. 访问对应页面查看效果
 
-### 示例1: AI新闻
-```markdown
----
-date: 2026-05-10
-category: LLM
-source: OpenAI
-title: "GPT-5 预览版发布，支持多模态推理"
-summary: "新一代模型在复杂推理任务上表现突出。"
-tags: ["多模态", "推理"]
----
-```
+## 样式规范
 
-### 示例2: 开源项目
-```markdown
----
-date: 2026-05-11  
-category: 开源
-source: HuggingFace
-title: "Transformers v5.0 发布，支持新架构"
-summary: "新增对Mamba、RWKV等架构的支持。"
-tags: ["开源", "Transformer"]
----
-```
+### 颜色变量
+- 主色调: `var(--color-primary)`
+- 文字颜色: `var(--text)`
+- 次要文字: `var(--text-muted)`
+- 背景色: `var(--bg-elevated)`
 
-### 示例3: 研究进展
-```markdown
----
-date: 2026-05-12
-category: 推荐系统  
-source: 阿里巴巴
-title: "端到端生成式推荐在淘宝落地"
-summary: "OneRec架构在电商场景取得显著效果提升。"
-tags: ["生成式推荐", "电商"]
----
-```
+### 布局规范
+- 容器宽度: `max-width: 1200px`
+- 内边距: `padding: 1.5rem`
+- 圆角: `var(--radius-lg)`
+- 阴影: `var(--shadow-md)`
 
-## 开发说明
+## 响应式设计
+所有页面都支持移动端和桌面端自适应：
+- 桌面端: 多列网格布局
+- 移动端: 单列垂直布局
+- 断点: `768px`
 
-### 技术实现
-- 使用 `Astro.glob('./articles/*.md')` 动态读取文章
-- 自动解析frontmatter元数据
-- 支持实时热重载，修改后立即生效
+## 扩展建议
 
-### 自定义扩展
-如需添加新功能（如搜索、分页等），可修改 `src/pages/frontier/index.astro`
+### 短期优化
+1. 为news部分实现动态markdown文件读取
+2. 添加搜索功能
+3. 增加RSS订阅支持
 
-## 部署说明
+### 长期规划
+1. 实现用户评论系统
+2. 添加文章收藏功能
+3. 支持文章分享统计
+4. 集成第三方API自动获取新闻
 
-GitHub Actions会自动构建部署，新增文章后：
-1. 推送代码到main分支
-2. 等待约2分钟构建完成
-3. 访问 https://wuhaiyangit.github.io/airesearch/frontier/ 查看效果
+## 技术架构
+
+- **框架**: Astro + Tailwind CSS
+- **部署**: GitHub Pages
+- **构建**: GitHub Actions
+- **样式**: CSS变量 + 响应式设计
+
+这个架构确保了内容的可维护性和扩展性，新增内容只需修改对应的数据数组或添加markdown文件即可。
