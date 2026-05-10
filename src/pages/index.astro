@@ -41,12 +41,78 @@ const sections = [
   },
 ];
 
-const latest = [
-  { date: '2026-05-08', tag: '论文', title: 'Generative Recommenders 综述：从 LLM 到多模态的统一范式' },
-  { date: '2026-05-06', tag: '前沿', title: 'DeepSeek 发布 R2：推理模型在 MATH 基准上再破纪录' },
-  { date: '2026-05-05', tag: '书籍', title: '《生成式推荐》第 1 章初稿完成：从 ID-based 到 Generative' },
-  { date: '2026-05-03', tag: '研究', title: '港股打新 2026 Q1 复盘：中签率、首日表现与策略改进' },
-];
+const latest: { date: string; tag: string; title: string; href: string }[] = [];
+
+// 1) 业界最新动态（取每天的第一条作为代表）
+const newsModules = import.meta.glob('./frontier/news/_data/*.md', { eager: true });
+for (const mod of Object.values(newsModules)) {
+  const fm = (mod as any).frontmatter || {};
+  if (fm.date && Array.isArray(fm.items) && fm.items.length > 0) {
+    const first = fm.items[0];
+    latest.push({
+      date: fm.date,
+      tag: '前沿',
+      title: first.title,
+      href: first.link || url('/frontier'),
+    });
+  }
+}
+
+// 2) 技术专栏文章
+const columnModules = import.meta.glob('./frontier/columns/_data/*.md', { eager: true });
+for (const [path, mod] of Object.entries(columnModules)) {
+  const fm = (mod as any).frontmatter || {};
+  const slug = path.split('/').pop()?.replace('.md', '') || '';
+  if (fm.title) {
+    latest.push({
+      date: fm.date || '',
+      tag: '专栏',
+      title: fm.title,
+      href: url(`/frontier/columns/${slug}`),
+    });
+  }
+}
+
+// 3) 论文精读（frontier/papers）
+const frontierPaperModules = import.meta.glob('./frontier/papers/_data/*.md', { eager: true });
+for (const [path, mod] of Object.entries(frontierPaperModules)) {
+  const fm = (mod as any).frontmatter || {};
+  const slug = path.split('/').pop()?.replace('.md', '') || '';
+  if (fm.title) {
+    latest.push({
+      date: fm.date || (fm.year ? `${fm.year}-01-01` : ''),
+      tag: '论文',
+      title: fm.title,
+      href: url(`/frontier/papers/${slug}`),
+    });
+  }
+}
+
+// 4) 书籍章节（取每个 section 的 drafted_at 与标题）
+const chapterModules = import.meta.glob('./books/genrec/chapters/*.md', { eager: true });
+for (const [path, mod] of Object.entries(chapterModules)) {
+  const fm = (mod as any).frontmatter || {};
+  const fileName = path.split('/').pop()?.replace('.md', '') || '';
+  if (fm.title) {
+    latest.push({
+      date: fm.drafted_at || '',
+      tag: '书籍',
+      title: `《生成式推荐》${fm.chapter ? `第${parseInt(fm.chapter,10)}章 ` : ''}${fm.title}`,
+      href: url(`/books/genrec/chapters/${fileName}`),
+    });
+  }
+}
+
+// 按日期倒序，每个 tag 最多 2 条，再取前 6 条
+latest.sort((a, b) => (a.date < b.date ? 1 : -1));
+const tagCount: Record<string, number> = {};
+const latestTop: typeof latest = [];
+for (const item of latest) {
+  if (!item.date) continue;
+  tagCount[item.tag] = (tagCount[item.tag] || 0) + 1;
+  if (tagCount[item.tag] <= 2) latestTop.push(item);
+  if (latestTop.length >= 6) break;
+}
 ---
 
 <SiteLayout title="Research.Lab · 研究站">
@@ -104,17 +170,23 @@ const latest = [
   <section class="container latest-section">
     <div class="section-header">
       <h2>最新动态</h2>
-      <p>跨版块的最新更新一览。</p>
+      <p>跨版块的最新更新一览（自动汇总自各栏目的最新内容）。</p>
     </div>
-    <ul class="latest-list">
-      {latest.map(item => (
-        <li class="latest-item">
-          <span class="latest-date">{item.date}</span>
-          <span class="badge badge-accent">{item.tag}</span>
-          <span class="latest-title">{item.title}</span>
-        </li>
-      ))}
-    </ul>
+    {latestTop.length > 0 ? (
+      <ul class="latest-list">
+        {latestTop.map(item => (
+          <li class="latest-item">
+            <span class="latest-date">{item.date}</span>
+            <span class="badge badge-accent">{item.tag}</span>
+            <a class="latest-title" href={item.href} target={item.href.startsWith('http') ? '_blank' : '_self'} rel={item.href.startsWith('http') ? 'noopener' : undefined}>
+              {item.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="latest-empty">暂无更新动态。</p>
+    )}
   </section>
 </SiteLayout>
 
@@ -301,6 +373,19 @@ const latest = [
   .latest-title {
     color: var(--text);
     font-weight: 500;
+    text-decoration: none;
+  }
+  .latest-title:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  .latest-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
   }
 
   @media (max-width: 640px) {

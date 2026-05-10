@@ -1,39 +1,19 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 
-// Fake数据 - 业界最新动态
-const newsData = [
-  {
-    date: '2026-05-10',
-    items: [
-      { title: 'DeepSeek发布R2版本，推理效率提升40%', link: 'https://deepseek.com/blog/r2-release', source: 'DeepSeek官方博客', time: '09:00' },
-      { title: 'OpenAI推出GPT-5预览版，支持多模态输入', link: 'https://openai.com/blog/gpt-5-preview', source: 'OpenAI官方', time: '11:30' },
-      { title: 'Google Gemini 2.5展示跨模态推理能力', link: 'https://blog.google/products/gemini/gemini-2-5', source: 'Google AI博客', time: '14:15' },
-      { title: 'Meta发布HSTU-v2生成式推荐系统', link: 'https://ai.meta.com/blog/hstu-v2', source: 'Meta AI研究', time: '16:45' },
-      { title: '微软Azure AI新增多语言模型支持', link: 'https://azure.microsoft.com/blog/azure-ai-updates', source: 'Microsoft Azure', time: '18:20' }
-    ]
-  },
-  {
-    date: '2026-05-09',
-    items: [
-      { title: 'Anthropic发布Claude 3.5，上下文长度翻倍', link: 'https://www.anthropic.com/news/claude-3-5', source: 'Anthropic新闻', time: '08:30' },
-      { title: '特斯拉发布新一代自动驾驶芯片', link: 'https://www.tesla.com/blog/new-fsd-chip', source: 'Tesla技术博客', time: '10:45' },
-      { title: '亚马逊AWS推出AI模型托管服务', link: 'https://aws.amazon.com/blogs/aws/new-ai-model-hosting', source: 'AWS新闻', time: '13:20' },
-      { title: '英伟达发布新一代AI训练芯片', link: 'https://blogs.nvidia.com/blog/next-gen-ai-chips', source: 'NVIDIA开发者', time: '15:30' },
-      { title: '苹果研究多模态AI在iOS中的应用', link: 'https://machinelearning.apple.com/research/multimodal-ios', source: 'Apple ML研究', time: '17:50' }
-    ]
-  },
-  {
-    date: '2026-05-08',
-    items: [
-      { title: 'Mistral AI发布新一代开源模型Mistral-8x22B', link: 'https://mistral.ai/news/mixtral-8x22b', source: 'Mistral AI', time: '09:15' },
-      { title: '百度文心一言4.0发布，多模态能力大幅提升', link: 'https://yiyan.baidu.com/news/4.0', source: '百度AI', time: '11:00' },
-      { title: 'Hugging Face发布新版Transformers库', link: 'https://huggingface.co/blog/transformers-v5', source: 'Hugging Face', time: '14:30' },
-      { title: 'LangChain推出企业级RAG解决方案', link: 'https://blog.langchain.dev/enterprise-rag', source: 'LangChain博客', time: '16:00' },
-      { title: 'Stability AI开源新一代图像生成模型', link: 'https://stability.ai/news/stable-diffusion-4', source: 'Stability AI', time: '18:45' }
-    ]
-  }
-];
+// 业界最新动态：从 news/_data/*.md 自动读取，每个文件代表一天
+// 文件名建议使用日期格式（如 2026-05-10.md），frontmatter 包含 date 与 items 数组
+const newsModules = import.meta.glob('./news/_data/*.md', { eager: true });
+const newsData = Object.values(newsModules)
+  .map((mod: any) => {
+    const fm = mod.frontmatter || {};
+    return {
+      date: fm.date || '',
+      items: Array.isArray(fm.items) ? fm.items : []
+    };
+  })
+  .filter(day => day.date && day.items.length > 0)
+  .sort((a, b) => (a.date < b.date ? 1 : -1));
 
 // Fake数据 - 论文精读
 const paperCategories = [
