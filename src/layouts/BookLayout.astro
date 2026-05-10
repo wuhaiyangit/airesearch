@@ -19,12 +19,24 @@ const chapterModules = import.meta.glob('../pages/books/genrec/chapters/*.md', {
 const chapters = Object.entries(chapterModules)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([path, mod]) => {
-    const m = mod as { url?: string; frontmatter: { title: string } };
+    const m = mod as { url?: string; frontmatter: { title: string; chapter: string; section: string } };
     return {
       url: m.url ?? '#',
       title: m.frontmatter?.title ?? path,
+      chapter: m.frontmatter?.chapter ?? '01',
+      section: m.frontmatter?.section ?? '01',
     };
   });
+
+// 按章节和节号分组
+const groupedChapters = chapters.reduce((acc, chapter) => {
+  const chapterNum = chapter.chapter;
+  if (!acc[chapterNum]) {
+    acc[chapterNum] = [];
+  }
+  acc[chapterNum].push(chapter);
+  return acc;
+}, {} as Record<string, typeof chapters>);
 
 const pathname = Astro.url.pathname;
 const nav = [
@@ -96,13 +108,23 @@ function tocActive(linkUrl: string | undefined): boolean {
                 <span>引言</span>
               </a>
             </li>
-            {chapters.map((ch, i) => (
-              <li>
-                <a href={ch.url} class:list={['toc-link', { active: tocActive(ch.url) }]}>
-                  <span class="toc-num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>{ch.title}</span>
-                </a>
-              </li>
+            {Object.entries(groupedChapters).map(([chapterNum, sections]) => (
+              <>
+                <li class="toc-chapter">
+                  <a href={sections[0].url} class:list={['toc-link', { active: tocActive(sections[0].url) }]}>
+                    <span class="toc-num">{chapterNum.padStart(2, '0')}</span>
+                    <span>第 {chapterNum} 章</span>
+                  </a>
+                </li>
+                {sections.map((section, sectionIndex) => (
+                  <li class="toc-section">
+                    <a href={section.url} class:list={['toc-link', { active: tocActive(section.url) }]}>
+                      <span class="toc-num">{chapterNum}.{section.section}</span>
+                      <span>{section.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </>
             ))}
           </ul>
         </nav>
@@ -221,6 +243,31 @@ function tocActive(linkUrl: string | undefined): boolean {
       color: var(--text-subtle);
     }
     .toc-link.active .toc-num { background: var(--color-primary); color: #fff; }
+    
+    /* 一级目录样式 */
+    .toc-chapter .toc-link {
+      font-weight: 600;
+      margin-left: 0;
+    }
+    .toc-chapter .toc-num {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    
+    /* 二级目录样式 */
+    .toc-section .toc-link {
+      margin-left: 1.8rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid var(--border-light);
+    }
+    .toc-section .toc-num {
+      background: var(--bg-subtle);
+      color: var(--text-subtle);
+      font-size: 0.7rem;
+    }
+    .toc-section .toc-link.active {
+      border-left-color: var(--color-primary);
+    }
     .book-main { min-width: 0; padding: 0 0.5rem; }
 
     @media (max-width: 900px) {

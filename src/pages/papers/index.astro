@@ -51,11 +51,11 @@ const totalPapers = allPapers.length;
     </div>
   </section>
 
-  <section class="container stats-bar">
-    <div class="stat-item"><div class="stat-val">{totalPapers}</div><div class="stat-key">已收录论文</div></div>
-    <div class="stat-item"><div class="stat-val">{categories.length}</div><div class="stat-key">研究方向</div></div>
-    <div class="stat-item"><div class="stat-val">{totalPapers}</div><div class="stat-key">精读笔记</div></div>
-    <div class="stat-item"><div class="stat-val">每周</div><div class="stat-key">更新频率</div></div>
+  <section class="stats-bar">
+    <div class="stat-item"><span class="stat-val">{totalPapers}</span><span class="stat-key">已收录论文</span></div>
+    <div class="stat-item"><span class="stat-val">{categories.length}</span><span class="stat-key">研究方向</span></div>
+    <div class="stat-item"><span class="stat-val">{totalPapers}</span><span class="stat-key">精读笔记</span></div>
+    <div class="stat-item"><span class="stat-val">每周</span><span class="stat-key">更新频率</span></div>
   </section>
 
   <section id="categories" class="container category-section">
@@ -85,62 +85,80 @@ const totalPapers = allPapers.length;
       ))}
     </div>
 
-    <div class="add-tip">
-      <strong>💡 如何添加新论文？</strong>
-      只需在 <code>src/pages/papers/_data/</code> 目录下新建一个 markdown 文件，
-      在 frontmatter 中填写 <code>title / authors / year / venue / category / abstract</code> 等字段，
-      页面会自动收录并按分类展示。
-    </div>
+
   </section>
 </SiteLayout>
 
 <style>
   .page-header {
-    padding: 4rem 0 3rem;
+    padding: 2.2rem 0 1.8rem;
     background: var(--gradient-soft);
     border-bottom: 1px solid var(--border);
   }
   .page-header .kicker {
     display: inline-block;
-    padding: 0.3rem 0.9rem;
+    padding: 0.2rem 0.7rem;
     border-radius: 999px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-accent);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
   }
-  .page-header h1 { font-size: 2.5rem; margin-bottom: 0.6rem; }
-  .page-header p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
-  .header-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .page-header h1 { font-size: 1.8rem; margin-bottom: 0.35rem; }
+  .page-header p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.9rem; }
+  .header-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .header-actions .btn { padding: 0.45rem 1rem; font-size: 0.85rem; }
 
+  /* 统计条：从多列卡片改为单行紧凑样式 */
   .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    padding: 2rem 1.5rem;
-    margin-top: -2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0.6rem 1.5rem;
+    margin-top: 0;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: none;
     position: relative;
     z-index: 1;
   }
   .stat-item {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.2rem;
-    text-align: center;
-    box-shadow: var(--shadow-md);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0.3rem 1.1rem;
+    text-align: left;
+    box-shadow: none;
+    border-right: 1px solid var(--border-light);
   }
+  .stat-item:last-child { border-right: none; }
   .stat-val {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 1.05rem;
+    font-weight: 700;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .stat-key { font-size: 0.85rem; color: var(--text-subtle); margin-top: 0.2rem; }
+  .stat-key {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0;
+  }
+
+  @media (max-width: 600px) {
+    .stats-bar { gap: 0.2rem 0; }
+    .stat-item { padding: 0.25rem 0.7rem; }
+    .stat-val { font-size: 0.95rem; }
+    .stat-key { font-size: 0.72rem; }
+  }
 
   .category-section { padding: 2rem 1.5rem 3rem; }
   .sec-h2 {

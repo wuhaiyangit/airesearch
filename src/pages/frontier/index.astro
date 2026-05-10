@@ -299,62 +299,55 @@ const techColumns = [
   }
   .tabs {
     display: flex;
-    gap: 0.2rem;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0;
+    gap: 0.5rem;
+    border-bottom: none;
+    padding-bottom: 0.25rem;
+    flex-wrap: wrap;
   }
   .tab {
-    padding: 0.5rem 1.1rem;
-    background: transparent;
-    border: 1px solid transparent;
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
+    padding: 0.55rem 1.2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
     font-size: 0.88rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     position: relative;
-    bottom: -1px;
+    bottom: 0;
   }
   .tab:hover {
-    color: var(--text);
-    background: var(--bg-subtle);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
   }
-  /* 不同 Tab 各有主题色 */
-  .tab-news.active {
-    color: #3b82f6;
-    background: var(--bg-elevated);
-    border-color: var(--border-light);
-    border-top: 2px solid #3b82f6;
-    border-bottom-color: var(--bg-elevated);
-    font-weight: 600;
-  }
-  .tab-papers.active {
-    color: #8b5cf6;
-    background: var(--bg-elevated);
-    border-color: var(--border-light);
-    border-top: 2px solid #8b5cf6;
-    border-bottom-color: var(--bg-elevated);
-    font-weight: 600;
-  }
+  /* 三个 Tab 选中态统一为 btn-primary 同款渐变 */
+  .tab-news.active,
+  .tab-papers.active,
   .tab-columns.active {
-    color: #ec4899;
-    background: var(--bg-elevated);
-    border-color: var(--border-light);
-    border-top: 2px solid #ec4899;
-    border-bottom-color: var(--bg-elevated);
+    color: #fff;
+    background: var(--gradient-primary);
+    border-color: transparent;
+    box-shadow: var(--shadow-glow);
     font-weight: 600;
+  }
+  .tab-news.active:hover,
+  .tab-papers.active:hover,
+  .tab-columns.active:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
   }
 
   /* ===== 内容面板 ===== */
   .tab-content {
     background: var(--bg-elevated);
     border: 1px solid var(--border-light);
-    border-top: none;
-    border-radius: 0 0 6px 6px;
+    border-radius: 6px;
     padding: 1.5rem;
     min-height: 400px;
+    margin-top: 0.5rem;
   }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
@@ -710,10 +703,8 @@ const techColumns = [
 
   /* ===== 响应式 ===== */
   @media (max-width: 768px) {
-    .tabs { flex-direction: column; border-bottom: none; }
-    .tab { border-radius: 4px; border: 1px solid var(--border-light); bottom: 0; }
-    .tab.active { border-color: var(--color-primary); }
-    .tab-content { border-top: 1px solid var(--border-light); border-radius: 6px; }
+    .tabs { gap: 0.4rem; }
+    .tab { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
     .paper-row, .article-row { flex-direction: column; }
     .paper-side, .article-side { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 0.5rem; }
     .news-source { min-width: 5rem; max-width: 6rem; }

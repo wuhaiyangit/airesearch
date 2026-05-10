@@ -1,6 +1,20 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { url } from '../../utils/url';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
+// 动态计算章节数量
+function getChapterCount(bookSlug) {
+  try {
+    const chaptersDir = join(process.cwd(), 'src', 'pages', 'books', bookSlug, 'chapters');
+    const files = readdirSync(chaptersDir);
+    return files.filter(file => file.endsWith('.md')).length;
+  } catch (error) {
+    console.warn(`无法读取 ${bookSlug} 的章节目录:`, error.message);
+    return 0;
+  }
+}
 
 const books = [
   {
@@ -10,7 +24,7 @@ const books = [
     title: '生成式推荐',
     subtitle: 'Generative Recommendations: From ID-based to Sequential Generation',
     desc: '系统性梳理生成式推荐的理论基础、代表性工作、工业实践与未来方向。从 HSTU、TIGER 到 LLM-based 推荐，一本书讲清楚范式迁移的全貌。',
-    progress: 15,
+    progress: getChapterCount('genrec'),
     chapters: 20,
     cover: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
   },
@@ -52,16 +66,16 @@ const books = [
             <h3>{book.title}</h3>
             <p>{book.desc}</p>
             <div class="book-progress">
-              <div class="progress-info">
-                <span>已完成</span>
-                <span>{book.progress} / {book.chapters} 章</span>
-              </div>
-              <div class="progress-bar">
-                <div
-                  class="progress-fill"
-                  style={`width: ${(book.progress / book.chapters) * 100}%`}
-                ></div>
-              </div>
+              {book.progress > 0 ? (
+                <span class="progress-text">
+                  📖 已更新到 <strong>第 {book.progress} 章</strong>
+                  <span class="progress-total">/ 共 {book.chapters} 章</span>
+                </span>
+              ) : (
+                <span class="progress-text progress-pending">
+                  ✏️ 暂未开始连载（共 {book.chapters} 章）
+                </span>
+              )}
             </div>
             <span class="book-cta">开始阅读 →</span>
           </div>
@@ -153,24 +167,32 @@ const books = [
   .book-body p { color: var(--text-muted); margin-bottom: 1.2rem; font-size: 0.92rem; }
 
   .book-progress { margin-bottom: 1rem; }
-  .progress-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: var(--text-subtle);
-    margin-bottom: 0.4rem;
-  }
-  .progress-bar {
-    height: 6px;
+  .progress-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    color: var(--text);
+    padding: 0.45rem 0.85rem;
     background: var(--bg-subtle);
-    border-radius: 999px;
-    overflow: hidden;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    border-left: 3px solid var(--color-primary);
   }
-  .progress-fill {
-    height: 100%;
+  .progress-text strong {
+    font-weight: 700;
     background: var(--gradient-primary);
-    border-radius: 999px;
-    transition: width 0.6s ease;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .progress-total {
+    font-size: 0.78rem;
+    color: var(--text-subtle);
+  }
+  .progress-pending {
+    color: var(--text-muted);
+    border-left-color: var(--border);
   }
   .book-cta {
     display: inline-block;
