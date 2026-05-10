@@ -41,6 +41,7 @@ const paperCategories = [
     id: 'generative-recall',
     name: '生成式召回',
     description: '基于生成式模型的召回技术研究与应用',
+    color: 'purple',
     papers: [
       { title: 'HSTU: 基于Transformer的生成式召回架构', authors: 'Meta Research Team', link: '/frontier/papers/hstu-paper', year: '2026', abstract: '提出了一种基于Transformer的端到端生成式召回架构，在Instagram上实现大规模落地。' },
       { title: 'OneRec: 统一生成式推荐框架', authors: '阿里巴巴团队', link: '/frontier/papers/onerec-paper', year: '2025', abstract: '将召回、排序、重排统一到单一生成式模型中，在电商场景取得显著效果提升。' }
@@ -50,6 +51,7 @@ const paperCategories = [
     id: 'generative-search',
     name: '生成式搜索',
     description: '生成式模型在搜索领域的应用与优化',
+    color: 'blue',
     papers: [
       { title: 'SearchGPT: 基于LLM的智能搜索系统', authors: 'Google Research', link: '/frontier/papers/searchgpt-paper', year: '2026', abstract: '利用大语言模型进行query理解、文档排序和结果生成的一体化搜索解决方案。' },
       { title: 'REALM: 检索增强语言模型预训练', authors: 'Google Brain', link: '/frontier/papers/realm-paper', year: '2025', abstract: '将知识检索融入语言模型预训练过程，显著提升开放域问答性能。' }
@@ -59,6 +61,7 @@ const paperCategories = [
     id: 'model-scaling',
     name: '模型Scaling UP',
     description: '模型规模扩展与训练优化技术',
+    color: 'orange',
     papers: [
       { title: 'Scaling Laws for Large Language Models', authors: 'OpenAI Research', link: '/frontier/papers/scaling-laws', year: '2024', abstract: '系统性地研究了语言模型规模扩展的规律，为模型设计提供理论指导。' },
       { title: 'Efficient Training of Trillion-Parameter Models', authors: 'DeepSeek Research', link: '/frontier/papers/efficient-training', year: '2026', abstract: '提出新的训练优化技术，显著降低万亿参数模型的训练成本。' }
@@ -72,8 +75,9 @@ const techColumns = [
     id: 'llm',
     name: 'LLM技术专栏',
     description: '大语言模型技术深度解析与前沿探索',
+    color: 'pink',
     articles: [
-      { title: 'Transformer架构的演进与优化', author: 'AI技术专家', date: '2026-05-10', link: '/frontier/columns/transformer-evolution', summary: '从原始Transformer到现代变体的技术演进路径分析', tags: ['Transformer', '架构优化', '注意力机制'] },
+      { title: 'Transformer架构的演进与优化', author: 'AI技术专家', date: '2026-05-10', link: '/frontier/columns/transformer-evolution', summary: '从Transformer到现代变体的技术演进路径分析', tags: ['Transformer', '架构优化', '注意力机制'] },
       { title: '大模型推理优化技术详解', author: '推理优化专家', date: '2026-05-08', link: '/frontier/columns/inference-optimization', summary: '深入解析大模型推理阶段的性能优化策略与实践', tags: ['推理优化', '性能调优', '部署实践'] }
     ]
   },
@@ -81,13 +85,13 @@ const techColumns = [
     id: 'multimodal',
     name: '多模态技术专栏',
     description: '多模态AI技术原理与应用实践',
+    color: 'green',
     articles: [
       { title: '视觉-语言多模态融合技术', author: '多模态研究员', date: '2026-05-09', link: '/frontier/columns/vl-fusion', summary: '探索视觉与语言信息的深度融合方法与技术挑战', tags: ['多模态融合', '视觉语言', '跨模态学习'] },
       { title: '视频理解中的时序建模技术', author: '视频AI专家', date: '2026-05-07', link: '/frontier/columns/video-temporal', summary: '分析视频理解任务中的时序建模方法与最新进展', tags: ['视频理解', '时序建模', '动作识别'] }
     ]
   }
-];
----
+];---
 
 <SiteLayout title="学术最前沿 · Research.Lab">
   <section class="page-header">
@@ -102,9 +106,9 @@ const techColumns = [
     <!-- Tab导航 -->
     <div class="tabs-container">
       <div class="tabs">
-        <button class="tab active" data-tab="news">📰 业界最新动态</button>
-        <button class="tab" data-tab="papers">📄 论文精读</button>
-        <button class="tab" data-tab="columns">💡 技术专栏</button>
+        <button class="tab tab-news active" data-tab="news">📰 业界最新动态</button>
+        <button class="tab tab-papers" data-tab="papers">📄 论文精读</button>
+        <button class="tab tab-columns" data-tab="columns">💡 技术专栏</button>
       </div>
     </div>
 
@@ -159,7 +163,7 @@ const techColumns = [
         </div>
         <div class="categories-nav">
           {paperCategories.map(category => (
-            <a href={`#${category.id}`} class="category-pill">
+            <a href={`#${category.id}`} class:list={['category-pill', `cat-${category.color}`]}>
               {category.name}
               <span class="pill-count">{category.papers.length}</span>
             </a>
@@ -167,8 +171,9 @@ const techColumns = [
         </div>
         <div class="papers-container">
           {paperCategories.map(category => (
-            <section id={category.id} class="category-section">
+            <section id={category.id} class:list={['category-section', `cat-${category.color}`]}>
               <div class="category-heading">
+                <span class="cat-marker"></span>
                 <h3>{category.name}</h3>
                 <span class="category-desc">{category.description}</span>
               </div>
@@ -200,8 +205,9 @@ const techColumns = [
         </div>
         <div class="columns-container">
           {techColumns.map(column => (
-            <section class="column-section">
+            <section class:list={['column-section', `cat-${column.color}`]}>
               <div class="column-heading">
+                <span class="cat-marker"></span>
                 <h3>{column.name}</h3>
                 <span class="column-desc">{column.description}</span>
               </div>
@@ -252,18 +258,28 @@ const techColumns = [
   /* ===== 页面头部 ===== */
   .page-header {
     padding: 2.5rem 0 2rem;
-    background: var(--bg-elevated);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.04) 0%, rgba(139, 92, 246, 0.04) 50%, rgba(236, 72, 153, 0.04) 100%);
     border-bottom: 1px solid var(--border-light);
+    position: relative;
+  }
+  .page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
   }
   .page-header .kicker {
     display: inline-block;
     padding: 0.2rem 0.7rem;
     border-radius: 4px;
-    background: var(--bg-subtle);
-    border: 1px solid var(--border-light);
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--text-muted);
+    color: #3b82f6;
     margin-bottom: 0.8rem;
   }
   .page-header h1 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text); }
@@ -305,10 +321,28 @@ const techColumns = [
     color: var(--text);
     background: var(--bg-subtle);
   }
-  .tab.active {
-    color: var(--color-primary);
+  /* 不同 Tab 各有主题色 */
+  .tab-news.active {
+    color: #3b82f6;
     background: var(--bg-elevated);
     border-color: var(--border-light);
+    border-top: 2px solid #3b82f6;
+    border-bottom-color: var(--bg-elevated);
+    font-weight: 600;
+  }
+  .tab-papers.active {
+    color: #8b5cf6;
+    background: var(--bg-elevated);
+    border-color: var(--border-light);
+    border-top: 2px solid #8b5cf6;
+    border-bottom-color: var(--bg-elevated);
+    font-weight: 600;
+  }
+  .tab-columns.active {
+    color: #ec4899;
+    background: var(--bg-elevated);
+    border-color: var(--border-light);
+    border-top: 2px solid #ec4899;
     border-bottom-color: var(--bg-elevated);
     font-weight: 600;
   }
@@ -376,6 +410,7 @@ const techColumns = [
   .news-list { display: flex; flex-direction: column; gap: 0.6rem; }
   .news-day {
     border: 1px solid var(--border-light);
+    border-left: 3px solid #3b82f6;
     border-radius: 4px;
     overflow: hidden;
   }
@@ -384,11 +419,17 @@ const techColumns = [
     align-items: center;
     gap: 0.75rem;
     padding: 0.35rem 0.75rem;
-    background: var(--bg-subtle);
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.06), transparent);
     border-bottom: 1px solid var(--border-light);
   }
-  .day-date { font-size: 0.8rem; font-weight: 600; color: var(--text); }
-  .day-count { font-size: 0.72rem; color: var(--text-muted); }
+  .day-date { font-size: 0.8rem; font-weight: 600; color: #2563eb; }
+  .day-count {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    padding: 0.05rem 0.4rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 2px;
+  }
 
   .day-items { padding: 0; }
   .news-row {
@@ -442,17 +483,23 @@ const techColumns = [
     padding: 0.3rem 0.7rem;
     background: var(--bg-subtle);
     border: 1px solid var(--border-light);
+    border-left: 3px solid var(--border-light);
     border-radius: 3px;
     font-size: 0.82rem;
     color: var(--text-muted);
     text-decoration: none;
     transition: all 0.15s;
   }
-  .category-pill:hover {
-    border-color: var(--color-primary-light);
-    color: var(--color-primary);
-    background: var(--bg-elevated);
-  }
+  .category-pill.cat-purple { border-left-color: #8b5cf6; }
+  .category-pill.cat-blue { border-left-color: #3b82f6; }
+  .category-pill.cat-pink { border-left-color: #ec4899; }
+  .category-pill.cat-orange { border-left-color: #f59e0b; }
+  .category-pill.cat-green { border-left-color: #10b981; }
+  .category-pill.cat-purple:hover { background: rgba(139, 92, 246, 0.08); color: #8b5cf6; border-color: rgba(139, 92, 246, 0.3); border-left-color: #8b5cf6; }
+  .category-pill.cat-blue:hover { background: rgba(59, 130, 246, 0.08); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); border-left-color: #3b82f6; }
+  .category-pill.cat-pink:hover { background: rgba(236, 72, 153, 0.08); color: #ec4899; border-color: rgba(236, 72, 153, 0.3); border-left-color: #ec4899; }
+  .category-pill.cat-orange:hover { background: rgba(245, 158, 11, 0.08); color: #d97706; border-color: rgba(245, 158, 11, 0.3); border-left-color: #f59e0b; }
+  .category-pill.cat-green:hover { background: rgba(16, 185, 129, 0.08); color: #10b981; border-color: rgba(16, 185, 129, 0.3); border-left-color: #10b981; }
   .pill-count {
     font-size: 0.7rem;
     background: var(--border-light);
@@ -463,14 +510,42 @@ const techColumns = [
 
   .papers-container { display: flex; flex-direction: column; gap: 0; }
   .category-section {
-    padding: 1rem 0;
+    padding: 1rem 0 1rem 0.9rem;
     border-bottom: 1px solid var(--border-light);
+    border-left: 3px solid transparent;
+    margin-left: -0.9rem;
+    padding-left: 0.9rem;
+    transition: border-left-color 0.15s;
   }
+  .category-section.cat-purple { border-left-color: rgba(139, 92, 246, 0.35); }
+  .category-section.cat-blue { border-left-color: rgba(59, 130, 246, 0.35); }
+  .category-section.cat-pink { border-left-color: rgba(236, 72, 153, 0.35); }
+  .category-section.cat-orange { border-left-color: rgba(245, 158, 11, 0.35); }
+  .category-section.cat-green { border-left-color: rgba(16, 185, 129, 0.35); }
+  .category-section:hover.cat-purple { border-left-color: #8b5cf6; }
+  .category-section:hover.cat-blue { border-left-color: #3b82f6; }
+  .category-section:hover.cat-pink { border-left-color: #ec4899; }
+  .category-section:hover.cat-orange { border-left-color: #f59e0b; }
+  .category-section:hover.cat-green { border-left-color: #10b981; }
   .category-section:last-child { border-bottom: none; }
+
+  .cat-marker {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cat-purple .cat-marker { background: #8b5cf6; }
+  .cat-blue .cat-marker { background: #3b82f6; }
+  .cat-pink .cat-marker { background: #ec4899; }
+  .cat-orange .cat-marker { background: #f59e0b; }
+  .cat-green .cat-marker { background: #10b981; }
+
   .category-heading {
     display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.75rem;
   }
   .category-heading h3 {
@@ -479,6 +554,10 @@ const techColumns = [
     color: var(--text);
     margin: 0;
   }
+  .cat-purple .category-heading h3 { color: #7c3aed; }
+  .cat-blue .category-heading h3 { color: #2563eb; }
+  .cat-pink .category-heading h3 { color: #db2777; }
+  .cat-orange .category-heading h3 { color: #d97706; }
   .category-desc {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -536,14 +615,28 @@ const techColumns = [
   /* ===== 技术专栏 ===== */
   .columns-container { display: flex; flex-direction: column; gap: 0; }
   .column-section {
-    padding: 1rem 0;
+    padding: 1rem 0 1rem 0.9rem;
     border-bottom: 1px solid var(--border-light);
+    border-left: 3px solid transparent;
+    margin-left: -0.9rem;
+    padding-left: 0.9rem;
+    transition: border-left-color 0.15s;
   }
+  .column-section.cat-purple { border-left-color: rgba(139, 92, 246, 0.35); }
+  .column-section.cat-blue { border-left-color: rgba(59, 130, 246, 0.35); }
+  .column-section.cat-pink { border-left-color: rgba(236, 72, 153, 0.35); }
+  .column-section.cat-orange { border-left-color: rgba(245, 158, 11, 0.35); }
+  .column-section.cat-green { border-left-color: rgba(16, 185, 129, 0.35); }
+  .column-section:hover.cat-purple { border-left-color: #8b5cf6; }
+  .column-section:hover.cat-blue { border-left-color: #3b82f6; }
+  .column-section:hover.cat-pink { border-left-color: #ec4899; }
+  .column-section:hover.cat-orange { border-left-color: #f59e0b; }
+  .column-section:hover.cat-green { border-left-color: #10b981; }
   .column-section:last-child { border-bottom: none; }
   .column-heading {
     display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.75rem;
   }
   .column-heading h3 {
@@ -552,6 +645,10 @@ const techColumns = [
     color: var(--text);
     margin: 0;
   }
+  .column-section.cat-pink .column-heading h3 { color: #db2777; }
+  .column-section.cat-green .column-heading h3 { color: #059669; }
+  .column-section.cat-purple .column-heading h3 { color: #7c3aed; }
+  .column-section.cat-blue .column-heading h3 { color: #2563eb; }
   .column-desc {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -591,11 +688,11 @@ const techColumns = [
   }
   .tag {
     font-size: 0.68rem;
-    padding: 0.1rem 0.35rem;
-    background: var(--bg-subtle);
-    border: 1px solid var(--border-light);
+    padding: 0.1rem 0.4rem;
+    background: rgba(236, 72, 153, 0.06);
+    border: 1px solid rgba(236, 72, 153, 0.18);
     border-radius: 2px;
-    color: var(--text-muted);
+    color: #be185d;
   }
   .article-side {
     display: flex;

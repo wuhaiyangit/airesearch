@@ -69,7 +69,7 @@ const totalPapers = allPapers.length;
           </div>
           <p class="cat-desc">{cat.desc}</p>
           <ul class="paper-list">
-            {cat.papers.map(p => (
+            {cat.papers.slice(0, 3).map(p => (
               <li>
                 <a href={url(`/papers/${p.slug}`)} class="paper-link">
                   <span class="paper-title">{p.title}</span>
@@ -78,7 +78,7 @@ const totalPapers = allPapers.length;
               </li>
             ))}
           </ul>
-          {cat.count > 0 && (
+          {cat.count > 3 && (
             <a href={url(`/papers/${cat.papers[0].slug}`)} class="cat-more">查看全部 {cat.count} 篇 →</a>
           )}
         </div>
