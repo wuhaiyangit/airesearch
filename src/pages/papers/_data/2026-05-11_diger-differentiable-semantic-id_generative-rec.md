@@ -1,4 +1,3 @@
-# DIGER: Differentiable Semantic ID for Generative Recommendation
 ---
 原文件: "2601.19711v3.pdf"
 title: "Differentiable Semantic ID for Generative Recommendation"

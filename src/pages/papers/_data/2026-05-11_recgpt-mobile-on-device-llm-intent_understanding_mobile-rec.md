@@ -1,4 +1,3 @@
-# RecGPT-Mobile: On-Device LLMs for User Intent Understanding
 ---
 原文件: "2605.04726v1.pdf"
 title: "RecGPT-Mobile: On-Device Large Language Models for User Intent Understanding in Taobao Feed Recommendation"

@@ -1,4 +1,3 @@
-# GR2: Generative Reasoning Re-ranker
 ---
 原文件: "2602.07774v4.pdf"
 title: "Generative Reasoning Re-ranker"
