@@ -1,13 +1,18 @@
-# DIGER: Differentiable Semantic ID for Generative Recommendation
-
-## 论文研读报告
-
-**论文信息**
-- 标题：Differentiable Semantic ID for Generative Recommendation
-- 作者：Junchen Fu, Xuri Ge, Alexandros Karatzoglou, Ioannis Arapakis, Suzan Verberne, Joemon M. Jose, Zhaochun Ren
-- 单位：University of Glasgow, Shandong University, Amazon, Telefónica Scientific Research, Leiden University
-- 发表：arXiv:2601.19711v3 [cs.IR], 2026年4月
-
+---
+原文件: "2602.07774v4.pdf"
+title: "DIGER: Differentiable Semantic ID for Generative Recommendation"
+authors: "Junchen Fu, Xuri Ge, Alexandros Karatzoglou, Ioannis Arapakis, Suzan Verberne, Joemon M. Jose, Zhaochun Ren"
+affiliation: "Amazon"
+year: "2026"
+category: "生成式推荐"
+abstract: "可微的语义ID"
+tags: ["生成式推荐", "语义ID"]
+Hash: "6d683bff982c5762"
+RecRatio: "6/9"
+Team: "Amazon"
+Reason: "可微的生成式推荐语义ID建模"
+精读日期: "2026-05-11"
+报告字数: "约 3800 字"
 ---
 
 ## 摘要与核心贡献
