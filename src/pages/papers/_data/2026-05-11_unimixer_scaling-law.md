@@ -1,5 +1,3 @@
-# UniMixer: A Unified Architecture for Scaling Laws in Recommendation Systems
-
 ---
 原文件: "unimixer.pdf"
 title: "UniMixer: A Unified Architecture for Scaling Laws in Recommendation Systems"

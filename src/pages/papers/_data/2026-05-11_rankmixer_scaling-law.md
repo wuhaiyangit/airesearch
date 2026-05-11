@@ -1,5 +1,3 @@
-# RankMixer: Scaling Up Ranking Models in Industrial Recommenders
-
 ---
 原文件: "rankermix.pdf"
 title: "RankMixer: Scaling Up Ranking Models in Industrial Recommenders"
