@@ -22,18 +22,36 @@ const allPapers = Object.entries(paperModules).map(([path, mod]) => {
 // 分类元信息（顺序、描述、配色）
 const categoryMeta = [
   { name: '生成式推荐', desc: '从 HSTU、TIGER 到 LLM-based 推荐，生成式范式的代表性工作。', color: 'purple' },
+  { name: '生成式召回', desc: '可微分语义 ID、生成式检索等召回阶段的前沿方法。', color: 'purple' },
+  { name: '生成式排序', desc: '基于 LLM 推理的生成式重排与排序方法。', color: 'purple' },
+  { name: '端侧LLM推荐', desc: '移动端/边缘侧部署 LLM 实现实时推荐与意图理解。', color: 'orange' },
   { name: '大语言模型', desc: 'LLM 预训练、对齐、推理、Agent 相关的核心论文。', color: 'blue' },
+  { name: '推荐系统',   desc: '推荐系统架构、特征工程、召回排序等经典与前沿方法。', color: 'blue' },
+  { name: '模型Scaling UP', desc: '大模型扩展定律、高效训练、分布式优化等 Scaling 相关研究。', color: 'pink' },
   { name: '多模态',     desc: 'CLIP、Diffusion、视觉-语言联合建模等多模态方向。', color: 'pink' },
   { name: '强化学习',   desc: 'RLHF、离线 RL、Agent 决策等 RL 相关工作。', color: 'orange' },
 ];
 
-// 按分类聚合
+// 按分类聚合（预定义分类）
+const knownCatNames = new Set(categoryMeta.map(m => m.name));
 const categories = categoryMeta.map(meta => {
   const papers = allPapers
     .filter(p => p.category === meta.name)
     .sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
   return { ...meta, count: papers.length, papers };
-}).filter(c => c.count > 0); // 过滤掉没有论文的分类
+}).filter(c => c.count > 0);
+
+// 兜底：未匹配预定义分类的论文归入"其他"
+const otherPapers = allPapers.filter(p => !knownCatNames.has(p.category));
+if (otherPapers.length > 0) {
+  categories.push({
+    name: '其他',
+    desc: '未归类的研究论文。',
+    color: 'blue',
+    count: otherPapers.length,
+    papers: otherPapers.sort((a, b) => Number(b.year || 0) - Number(a.year || 0)),
+  });
+}
 
 const totalPapers = allPapers.length;
 ---
@@ -69,16 +87,25 @@ const totalPapers = allPapers.length;
           </div>
           <p class="cat-desc">{cat.desc}</p>
           <ul class="paper-list">
-            {cat.papers.slice(0, 3).map(p => (
-              <li>
+            {cat.papers.slice(0, 5).map(p => (
+              <li class="paper-item">
                 <a href={url(`/papers/${p.slug}`)} class="paper-link">
-                  <span class="paper-title">{p.title}</span>
-                  <span class="paper-meta">{p.venue}{p.venue && p.year ? ' · ' : ''}{p.year}</span>
+                  <div class="paper-main">
+                    <span class="paper-title">{p.title}</span>
+                    <span class="paper-year-badge">{p.year}</span>
+                  </div>
+                  {p.authors && <div class="paper-authors">{p.authors}</div>}
+                  {p.abstract && <div class="paper-abstract">{p.abstract}</div>}
+                  {p.tags && p.tags.length > 0 && (
+                    <div class="paper-tags">
+                      {p.tags.map((tag: string) => <span class="paper-tag">{tag}</span>)}
+                    </div>
+                  )}
                 </a>
               </li>
             ))}
           </ul>
-          {cat.count > 3 && (
+          {cat.count > 5 && (
             <a href={url(`/papers/${cat.papers[0].slug}`)} class="cat-more">查看全部 {cat.count} 篇 →</a>
           )}
         </div>
@@ -168,8 +195,8 @@ const totalPapers = allPapers.length;
   }
 
   .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
   }
   .cat-card {
@@ -215,24 +242,73 @@ const totalPapers = allPapers.length;
     margin-bottom: 1rem;
     padding: 0;
   }
+  .paper-item {
+    margin-bottom: 0;
+  }
   .paper-link {
     display: block;
-    padding: 0.7rem 0;
-    border-bottom: 1px dashed var(--border);
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border-light);
     color: var(--text);
     text-decoration: none;
+    border-radius: var(--radius);
+    transition: background var(--transition);
+  }
+  .paper-link:hover {
+    background: var(--bg-subtle);
   }
   .paper-list li:last-child .paper-link { border-bottom: none; }
+  .paper-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
   .paper-title {
-    display: block;
-    font-size: 0.92rem;
-    font-weight: 500;
-    margin-bottom: 0.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .paper-year-badge {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    background: var(--color-primary);
+    color: #fff;
+  }
+  .paper-authors {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
     line-height: 1.35;
   }
-  .paper-meta {
-    font-size: 0.8rem;
+  .paper-abstract {
+    font-size: 0.83rem;
     color: var(--text-subtle);
+    line-height: 1.5;
+    margin-bottom: 0.35rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .paper-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+  }
+  .paper-tag {
+    font-size: 0.7rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-weight: 500;
   }
   .paper-link:hover .paper-title { color: var(--color-primary); }
 

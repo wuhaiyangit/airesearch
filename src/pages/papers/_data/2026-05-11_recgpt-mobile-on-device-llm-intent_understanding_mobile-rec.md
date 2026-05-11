@@ -3,7 +3,7 @@
 title: "RecGPT-Mobile: On-Device Large Language Models for User Intent Understanding in Taobao Feed Recommendation"
 authors: "Bin Zhang, Weipeng Huang, Dimin Wang, Jialin Zhu, Yuning Jiang, Zhaode Wang, Chengfei Lv, Jian Wang, Qichao Ma, Li Chen, Junqing Wu, Yipeng Yu"
 year: "2026"
-category: "端侧LLM推荐"
+category: "生成式召回"
 abstract: "RecGPT-Mobile首次在移动端部署轻量级LLM作为意图理解Agent，通过自适应Prompt构建和意图漂移触发机制，在淘宝4个场景实现平均+1.8%点击、+2.7%支付、+2.5% GMV提升。"
 tags: ["端侧LLM", "意图理解", "移动端推荐", "触发优化"]
 Hash: "7a555c74bf6ae9af"
