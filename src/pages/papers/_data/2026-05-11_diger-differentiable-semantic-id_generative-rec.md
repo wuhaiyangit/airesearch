@@ -163,10 +163,12 @@ $$\gamma = r \bar{f} = \frac{r}{K}$$
 
 识别过度使用的代码后，对热门代码应用Gumbel噪声更新，对低频代码使用确定性分配：
 
-$$y_i = \begin{cases}
+$$
+y_i = \begin{cases}
 \frac{\exp((\ell_i + g_i)/\tau)}{\sum_{j=1}^{K} \exp((\ell_j + g_j)/\tau)}, & i \in I_{high}^{(e)} \\
 \frac{\exp(\ell_i / \tau)}{\sum_{j=1}^{K} \exp(\ell_j / \tau)}, & i \in I_{low}^{(e)}
-\end{cases}$$
+\end{cases}
+$$
 
 ### 模型训练
 
