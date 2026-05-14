@@ -5,7 +5,7 @@ authors: "Bin Zhang, Weipeng Huang, Dimin Wang, Jialin Zhu, Yuning Jiang, Zhaode
 affiliation: "Taobao & Tmall Group of Alibaba, HangZhou, China"
 year: "2026"
 venue: "SIGIR '26 - 49th International ACM SIGIR Conference on Research and Development in Information Retrieval"
-category: "大语言模型/推荐系统"
+category: "生成式推荐"
 abstract: "RecGPT-Mobile 首次在移动端部署轻量级 LLM 作为意图理解代理，通过自适应 Prompt 构建和意图漂移检测机制，在淘宝移动端场景下实现用户下一搜索查询预测，显著提升推荐准确性。"
 tags: ["on-device-LLM", "intent-understanding", "mobile-recommendation", "e-commerce", "SIGIR"]
 Hash: "7a555c74bf6ae9af"

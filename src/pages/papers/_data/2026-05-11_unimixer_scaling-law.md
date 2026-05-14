@@ -168,11 +168,11 @@ $$UniMixing(X) = reshape(G(X, W_G) | [x_1 W_B^1; ...; x_{L//B} W_{L//B}^B], 1, L
 
 **统一框架下的方法差异**：
 
-| 方法 | Local Mixing Pattern | Global Mixing Pattern G(X, W_G) |
+| 方法 | Local Mixing Pattern | Global Mixing Pattern $G(X, W_G)$ |
 |---|---|---|
-| Self-Attention | $X W_V$ | $softmax((X W_Q)(X W_K)^T / \sqrt{d})$ |
-| Heterogeneous Attention | $X \tilde{W}_V$ | $softmax((X \tilde{W}_Q)(X \tilde{W}_K)^T / \sqrt{d})$ |
-| TokenMixer | I（单位矩阵） | 无参数，固定 |
+| Self-Attention | $X W_V$ | $\text{softmax}((X W_Q)(X W_K)^T / \sqrt{d})$ |
+| Heterogeneous Attention | $X \tilde{W}_V$ | $\text{softmax}((X \tilde{W}_Q)(X \tilde{W}_K)^T / \sqrt{d})$ |
+| TokenMixer | $I$（单位矩阵） | 无参数，固定 |
 | FM | $X X^T Y$ | 无 |
 
 #### 3.3.7 UniMixing-Lite：轻量级变体

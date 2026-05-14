@@ -5,7 +5,7 @@ authors: "Chao Yi, Dian Chen, Gaoyang Guo, Jiakai Tang, Jian Wu, Jing Yu, Mao Zh
 affiliation: "Alibaba Taobao; Renmin University of China"
 year: "2025"
 venue: "arXiv preprint (arXiv:2507.22879v2)"
-category: "大语言模型"
+category: "生成式推荐"
 abstract: "提出 RecGPT，首个在工业级推荐系统中全链路部署百亿参数推理增强 LLM 的框架，以用户意图为核心重构'兴趣挖掘→商品标签预测→语义检索→解释生成'闭环，在淘宝猜你喜欢场景取得 CTR+6.33%、IPV+9.47%、DCAU+3.72%、CICD+6.96% 的全面提升"
 tags: ["LLM-recommendation", "intent-centric", "self-training-evolution", "human-LLM-judge"]
 Hash: "107432324dcfef1b"

@@ -5,7 +5,7 @@ authors: "Mingfu Liang, Yufei Li, Jay Xu, Kavosh Asadi, Xi Liu, Shuo Gu, Kaushik
 affiliation: "Meta AI"
 year: "2026"
 venue: "arXiv preprint (arXiv:2602.07774v4)"
-category: "生成式推荐/大语言模型"
+category: "推荐系统"
 abstract: "GR2 提出一种端到端的生成式重排框架，通过三阶段训练管道（语义 ID 中期训练、推理轨迹 SFT、DAPO 强化学习优化）充分利用 LLM 的推理能力，在两个真实数据集上超越 OneRec-Think 基线 2.4% Recall@5 和 1.3% NDCG@5。"
 tags: ["生成式重排", "LLM推理", "强化学习", "语义ID", "DAPO"]
 Hash: "6d683bff982c5762"
