@@ -87,8 +87,8 @@ const totalPapers = allPapers.length;
           </div>
           <p class="cat-desc">{cat.desc}</p>
           <ul class="paper-list">
-            {cat.papers.slice(0, 5).map(p => (
-              <li class="paper-item">
+            {cat.papers.map((p, idx) => (
+              <li class:list={['paper-item', idx >= 5 ? 'paper-hidden' : '']}>
                 <a href={url(`/papers/${p.slug}`)} class="paper-link">
                   <div class="paper-main">
                     <span class="paper-title">{p.title}</span>
@@ -106,7 +106,7 @@ const totalPapers = allPapers.length;
             ))}
           </ul>
           {cat.count > 5 && (
-            <a href={url(`/papers/${cat.papers[0].slug}`)} class="cat-more">查看全部 {cat.count} 篇 →</a>
+            <button class="cat-more" data-expand>查看全部 {cat.count} 篇 ↓</button>
           )}
         </div>
       ))}
@@ -312,14 +312,26 @@ const totalPapers = allPapers.length;
   }
   .paper-link:hover .paper-title { color: var(--color-primary); }
 
+  .paper-hidden {
+    display: none;
+  }
+
   .cat-more {
     display: inline-block;
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--color-primary);
-    text-decoration: none;
+    background: none;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-  .cat-more:hover { text-decoration: underline; }
+  .cat-more:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
 
   .add-tip {
     margin-top: 2.5rem;
@@ -342,3 +354,16 @@ const totalPapers = allPapers.length;
     color: var(--color-primary);
   }
 </style>
+
+<script>
+  document.querySelectorAll('[data-expand]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.cat-card');
+      if (!card) return;
+      card.querySelectorAll('.paper-hidden').forEach(item => {
+        item.classList.remove('paper-hidden');
+      });
+      btn.remove();
+    });
+  });
+</script>
