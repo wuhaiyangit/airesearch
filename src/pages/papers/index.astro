@@ -25,9 +25,9 @@ const allPapers = Object.entries(paperModules).map(([path, mod]) => {
 });
 
 // 分类元信息（顺序、描述、配色）
+// match: 匹配的 category 值列表，未指定时默认用 name 匹配
 const categoryMeta = [
-  { name: '生成式推荐', desc: '从 HSTU、TIGER 到 LLM-based 推荐，生成式范式的代表性工作。', color: 'purple' },
-  { name: '生成式召回', desc: '可微分语义 ID、生成式检索等召回阶段的前沿方法。', color: 'purple' },
+  { name: '生成式推荐 & 召回', match: ['生成式推荐', '生成式召回'], desc: '从 HSTU、TIGER 到 LLM-based 推荐与生成式检索，覆盖推荐与召回阶段的代表性工作。', color: 'purple' },
   { name: '生成式排序', desc: '基于 LLM 推理的生成式重排与排序方法。', color: 'purple' },
   { name: '端侧LLM推荐', desc: '移动端/边缘侧部署 LLM 实现实时推荐与意图理解。', color: 'orange' },
   { name: '大语言模型', desc: 'LLM 预训练、对齐、推理、Agent 相关的核心论文。', color: 'blue' },
@@ -38,10 +38,14 @@ const categoryMeta = [
 ];
 
 // 按分类聚合（预定义分类）
-const knownCatNames = new Set(categoryMeta.map(m => m.name));
+// 收集所有会被匹配到的 category 名称
+const knownCatNames = new Set(
+  categoryMeta.flatMap(m => (m as any).match ? (m as any).match : [m.name])
+);
 const categories = categoryMeta.map(meta => {
+  const matchNames: string[] = (meta as any).match || [meta.name];
   const papers = allPapers
-    .filter(p => p.category === meta.name)
+    .filter(p => matchNames.includes(p.category))
     .sort((a, b) => b.date.localeCompare(a.date));
   return { ...meta, count: papers.length, papers };
 }).filter(c => c.count > 0);
