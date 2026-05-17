@@ -5,7 +5,7 @@ authors: "Yuchen Jiang, Jie Zhu, Xintian Han, Hui Lu, Kunmin Bai, Mingyu Yang, S
 affiliation: "ByteDance AML (ByteDance 推荐系统机器学习团队)"
 year: "2026"
 venue: "ACM Conference (arXiv preprint arXiv:2602.06563v2)"
-category: "推荐系统"
+category: "模型Scaling UP"
 abstract: "字节跳动提出 TokenMixer-Large，通过系统设计解决深层 TokenMixer 的梯度消失和稀疏化难题，通过混合-恢复操作、层间残差和辅助损失确保深层稳定梯度传播，集成 Sparse Per-token MoE 实现「稀疏训练、稀疏服务」范式，在抖音广告、电商和直播三大场景实现产品级部署，参数扩展到 70 亿（在线）和 150 亿（离线），电商订单提升 +1.66%、广告 ADSS 提升 +2.0%、直播收入提升 +1.4%。"
 tags: ["scaling-law", "ranking-model", "token-mixer", "sparse-moe", "industrial-rec"]
 Hash: "62b61c910ab7b34b"

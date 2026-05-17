@@ -5,7 +5,7 @@ authors: "Mingming Ha, Guanchen Wang, Linxun Chen, Xuan Rao, Yuexin Shi, Tianbao
 affiliation: "Kuaishou Technology"
 year: "2026"
 venue: "arXiv:2604.00590v2 [cs.IR], April 2026"
-category: "推荐系统"
+category: "模型Scaling UP"
 abstract: "提出 UniMixer 统一可扩展架构，将注意力、TokenMixer 和 FM 三种主流推荐 Scaling 架构统一到同一理论框架，通过将规则化 TokenMixer 参数化，实现可学习的 token 混合模式，并设计轻量级 UniMixing-Lite 模块，在最佳参数效率和计算效率下实现了最陡峭的 scaling 曲线。"
 tags: ["Scaling Law", "Unified Architecture", "推荐系统", "TokenMixer Parameterization"]
 Hash: "020e8017054d4294"

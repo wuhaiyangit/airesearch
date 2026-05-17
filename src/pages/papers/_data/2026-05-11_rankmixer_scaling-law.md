@@ -5,7 +5,7 @@ authors: "Jie Zhu*, Zhifang Fan*, Xiaoxie Zhu*, Yuchen Jiang*, Hangyu Wang, Xint
 affiliation: "ByteDance"
 year: "2025"
 venue: "arXiv:2507.15551v3 [cs.IR], accepted at ACM CIKM 2025"
-category: "推荐系统"
+category: "模型Scaling UP"
 abstract: "提出 RankMixer，硬件感知的统一可扩展特征交互架构，用 multi-head token mixing 替换二次注意力，在保持推理延迟不变的前提下将模型参数扩展两个数量级，MFU 从 4.5% 提升至 45%，在线 DAU +0.3%，时长 +1.08%。"
 tags: ["Scaling Law", "Ranking Model", "推荐系统", "Sparse-MoE"]
 Hash: "4ce87d626d0a9945"
