@@ -41,9 +41,7 @@ review_notes:
 
 形式化地，把传统双塔召回的基本式写为公式 (3.1)。在阅读之前，先说明符号：$u$ 表示一次用户请求的上下文（含用户画像、历史序列、即时信号），$i$ 表示物品库 $\mathcal{I}$ 中的一个物品，$f_\theta$ 是用户塔，$g_\phi$ 是物品塔，$\hat{y}_{u,i}$ 是用户对物品的相关性预估。
 
-$$\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle,
-\qquad
-\mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}$$
+$$\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle, \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}$$
 
 公式 (3.1) 凝缩了双塔范式的全部假设：**第一，** 用户和物品都可以**独立**编码为同一个向量空间中的固定向量；**第二，** 相关性可以由向量内积或余弦相似度来近似；**第三，** 召回质量等价于"找到内积最大的若干物品"，因此可以被 ANN 索引以"误差换效率"的方式近似求解。这三条假设在 2016—2020 年的中等规模物品库与中等复杂度兴趣建模下表现良好，是双塔范式得以确立工业地位的根本原因。
 
