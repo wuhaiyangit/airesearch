@@ -41,7 +41,9 @@ review_notes:
 
 形式化地，把传统双塔召回的基本式写为公式 (3.1)。在阅读之前，先说明符号：$u$ 表示一次用户请求的上下文（含用户画像、历史序列、即时信号），$i$ 表示物品库 $\mathcal{I}$ 中的一个物品，$f_\theta$ 是用户塔，$g_\phi$ 是物品塔，$\hat{y}_{u,i}$ 是用户对物品的相关性预估。
 
-$$\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle, \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}$$
+$$
+\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle, \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}
+$$
 
 公式 (3.1) 凝缩了双塔范式的全部假设：**第一，** 用户和物品都可以**独立**编码为同一个向量空间中的固定向量；**第二，** 相关性可以由向量内积或余弦相似度来近似；**第三，** 召回质量等价于"找到内积最大的若干物品"，因此可以被 ANN 索引以"误差换效率"的方式近似求解。这三条假设在 2016—2020 年的中等规模物品库与中等复杂度兴趣建模下表现良好，是双塔范式得以确立工业地位的根本原因。
 
@@ -89,9 +91,9 @@ Wang 等于 2026 年提出的 DIG（Discrimination Is Generation）[REF-095] 把
 
 为了让读者直观把握"换范式"在数学和架构两个层面的真正含义，这里给出生成式召回的形式化对照。继续沿用前节的符号定义，并新增：物品 $i$ 通过第 2 章的某种 tokenize 流程映射为 SID 序列 $(c_1, c_2, \ldots, c_T)$，其中 $c_t$ 是该序列的第 $t$ 个语义 token，$\Theta$ 是统一的生成模型参数（典型为 T5/Decoder-only 结构）。生成式召回写为公式 (3.2)：
 
-$$P(i\mid u) \;=\; \prod_{t=1}^{T} P\!\left(c_t \,\big|\, c_{<t},\, u;\, \Theta\right),
-\qquad
-\mathrm{Top\text{-}K}(u) \;=\; \mathrm{BeamSearch}\!\left(\Theta, u\right). \tag{3.2}$$
+$$
+P(i\mid u) \;=\; \prod_{t=1}^{T} P\!\left(c_t \,\big|\, c_{<t},\, u;\, \Theta\right), \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{BeamSearch}\!\left(\Theta, u\right). \tag{3.2}
+$$
 
 公式 (3.2) 与公式 (3.1) 形成几个根本对照。**第一，** 物品不再有"独立编码后入库"的环节——物品的"表示"就是它的 SID 序列，而生成这一序列的概率分布由统一模型 $\Theta$ 直接给出。**第二，** ANN 索引这一非可微环节被自回归解码加 beam search 取代——后者虽然仍是一种近似搜索，但与训练目标共享相同的概率框架，工程上更容易在一致性意义下分析误差。**第三，** 在工业实践中，"业务约束"（时效性、类目、库存等）可以通过**前缀树（Prefix Tree / Trie）**或更激进的**约束解码**直接注入到 beam search 步骤里——这一能力在 ANN 范式下需要外挂复杂的过滤逻辑才能实现。
 
