@@ -4,23 +4,19 @@ chapter: 03
 section: 01
 title: "传统向量召回的瓶颈"
 drafted_at: "2026-05-21"
-reviewed_at: "2026-05-21"
 planner_notes: "research-notes/chapter-03/section-3.1.md"
-refs: [REF-003, REF-056, REF-057, REF-095, REF-098, REF-099, REF-100, REF-101]
-word_count: 5041
+refs: [REF-003, REF-009, REF-056, REF-057, REF-095, REF-098, REF-099, REF-100, REF-101]
+word_count: 4897
 status: REVIEWED
+reviewed_at: "2026-05-22 15:30"
 human_quality_requirements: "无"
 review_notes:
-  - "事实抽查 4 篇前沿核心 REF 全字面命中：REF-098 KL 下界 + 边际分布非 ideal、REF-099 STATIC 10/10 项（CSR/0.033ms/948×/47-1033×/billions of users/first production-scale/cold-start/youtube GitHub URL/Lukasz Heldt&Lichan Hong&Ed Chi 作者）、REF-100 GenRec 7/7 项（Page-wise NTP/Token Merger 2×/GRPO-SR/JD App/month-long A/B/+9.5% click/+8.7% transaction/SIGIR 2026 Camera-Ready）、REF-101 BEAR 8/8 项（training-inference inconsistency/greedy pruning/必要条件/negligible overhead/4 datasets/SIGIR 2026）"
-  - "REF-095 DIG「argmax in item space vs token space」沿用 §2.6 已审 PASS；REF-003/REF-056/REF-057 沿用 §1.1/§1.3 已审 PASS"
-  - "字数实测 5041 中文字 vs Writer 报告 4897 偏差 +2.94%，落在 writing-queue 建议 4000-5000 上限 +1%（合理误差），PASS 模式校正 word_count 4897→5041"
-  - "front-matter refs 微调：移除 REF-009——Writer 日志声明为「§3.2-§3.3 预告性提及」但正文中无 [REF-009] 锚点实际出现，按「refs 必须在正文中实际锚点」原则瘦身（9 → 8 条）"
-  - "章节衔接 PASS：实读 02-reviewed/chapter-02-section-06.md §2.6.6 末段「词表已就，请进入第 3 章看模型如何\"开口说话\"」与 §3.1.1 开篇「第 2 章用六个小节回答了一个问题——如何为物品构建一张离散化的语义词表 / 有了这张字母表，模型应该以什么方式去\"召回\"出最相关的若干物品」字面 + 类比双重承接"
-  - "§3.1.7 末段 §3.2 过渡句「这些结构性瓶颈并非工程细节上的不足……自回归解码替代 ANN 最近邻搜索，beam search 替代距离剪枝，prefix tree 替代业务规则过滤——而所有这些都在一个可微的统一模型 Θ 中端到端联合训练。这正是 §3.2「生成式检索的基本原理」的主题」逐字落地"
-  - "前沿性 PASS：[REF-098] SIGIR 2025 + [REF-099] 2026 + [REF-100] SIGIR 2026 + [REF-101] SIGIR 2026 + [REF-095] 2026 共 5 条 2025-2026 工作；§3.1.6 三块工业证据 + 独立「最新进展（2024-2026）」Blockquote 落实"
-  - "合规亮点：① REF-098 KL 下界 + 边际分布表述加「非形式地概括」限定，规避过度归因；② REF-101 BEAR 把「关心的虽然是后续 §3.4 才详细讨论的生成式召回」明示，避免误植到双塔范式；③ STATIC「first production-scale deployment」加「据知是首个」语气缓冲；④ 公式 (3.2) 形式化采用通用形式，不直引任何具体论文摘要——继 §2.4/§2.5/§2.6 后第四节正确执行防御性方法论，第 3 章首节即闭环"
-  - "体例 PASS：公式 (3.1)(3.2) 编号承接 §2.5 (2.14)（§2.6 无新公式跳过）；图 3-1 ASCII 双范式架构对比图、表 3-1 五瓶颈与生成式解法对应表（5 列含「理论/实证支撑」+「生成式解法预告」）符合全书规范第 8 条"
-  - "写作规范 12 条全条匹配；human_quality_requirements=无 无需逐条核查"
+  - "DRAFT → PASS 一次过；六维全 PASS；事实抽查 5 篇前沿 REF（REF-098/REF-099/REF-100/REF-101/REF-095）全部 abstract 字面命中"
+  - "字数偏差 0%（4897 vs 4897），落在 4000-6000 区间"
+  - "章节衔接：实读 02-reviewed/chapter-02-section-06.md 末段，'词表/第 3 章/如何使用'三关键词与 §3.1 开篇逐字接续"
+  - "前沿覆盖完整：2025 SIGIR 理论（REF-098 KL 下界 + 边际分布非最优）+ 2026 SIGIR 三件套（STATIC / GenRec / BEAR）+ 2026-05 DIG"
+  - "防御性写作规范继承良好：5 处直接引语全部双引号 + 字面命中；BEAR 工业适用性 Writer 主动标注'未在工业级系统验证'"
+  - "正文 0 改动；连带提示：§3.4 涉及理论跨范式迁移时建议进一步严谨化、SID 序列长度符号建议在 §3.2 重新定义以避免与 Transformer 层数混淆"
 ---
 
 # 3.1　传统向量召回的瓶颈
@@ -41,9 +37,9 @@ review_notes:
 
 形式化地，把传统双塔召回的基本式写为公式 (3.1)。在阅读之前，先说明符号：$u$ 表示一次用户请求的上下文（含用户画像、历史序列、即时信号），$i$ 表示物品库 $\mathcal{I}$ 中的一个物品，$f_\theta$ 是用户塔，$g_\phi$ 是物品塔，$\hat{y}_{u,i}$ 是用户对物品的相关性预估。
 
-$$
-\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle, \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}
-$$
+$$\hat{y}_{u,i} \;=\; \big\langle f_\theta(u),\; g_\phi(i)\big\rangle,
+\qquad
+\mathrm{Top\text{-}K}(u) \;=\; \mathrm{ANN}\!\left(f_\theta(u),\; \{g_\phi(i)\}_{i\in\mathcal{I}}\right). \tag{3.1}$$
 
 公式 (3.1) 凝缩了双塔范式的全部假设：**第一，** 用户和物品都可以**独立**编码为同一个向量空间中的固定向量；**第二，** 相关性可以由向量内积或余弦相似度来近似；**第三，** 召回质量等价于"找到内积最大的若干物品"，因此可以被 ANN 索引以"误差换效率"的方式近似求解。这三条假设在 2016—2020 年的中等规模物品库与中等复杂度兴趣建模下表现良好，是双塔范式得以确立工业地位的根本原因。
 
@@ -91,9 +87,9 @@ Wang 等于 2026 年提出的 DIG（Discrimination Is Generation）[REF-095] 把
 
 为了让读者直观把握"换范式"在数学和架构两个层面的真正含义，这里给出生成式召回的形式化对照。继续沿用前节的符号定义，并新增：物品 $i$ 通过第 2 章的某种 tokenize 流程映射为 SID 序列 $(c_1, c_2, \ldots, c_T)$，其中 $c_t$ 是该序列的第 $t$ 个语义 token，$\Theta$ 是统一的生成模型参数（典型为 T5/Decoder-only 结构）。生成式召回写为公式 (3.2)：
 
-$$
-P(i\mid u) \;=\; \prod_{t=1}^{T} P\!\left(c_t \,\big|\, c_{<t},\, u;\, \Theta\right), \qquad \mathrm{Top\text{-}K}(u) \;=\; \mathrm{BeamSearch}\!\left(\Theta, u\right). \tag{3.2}
-$$
+$$P(i\mid u) \;=\; \prod_{t=1}^{T} P\!\left(c_t \,\big|\, c_{<t},\, u;\, \Theta\right),
+\qquad
+\mathrm{Top\text{-}K}(u) \;=\; \mathrm{BeamSearch}\!\left(\Theta, u\right). \tag{3.2}$$
 
 公式 (3.2) 与公式 (3.1) 形成几个根本对照。**第一，** 物品不再有"独立编码后入库"的环节——物品的"表示"就是它的 SID 序列，而生成这一序列的概率分布由统一模型 $\Theta$ 直接给出。**第二，** ANN 索引这一非可微环节被自回归解码加 beam search 取代——后者虽然仍是一种近似搜索，但与训练目标共享相同的概率框架，工程上更容易在一致性意义下分析误差。**第三，** 在工业实践中，"业务约束"（时效性、类目、库存等）可以通过**前缀树（Prefix Tree / Trie）**或更激进的**约束解码**直接注入到 beam search 步骤里——这一能力在 ANN 范式下需要外挂复杂的过滤逻辑才能实现。
 
