@@ -663,6 +663,11 @@ const techColumns = [
     color: var(--text-subtle);
     white-space: nowrap;
     flex-shrink: 0;
+    max-width: 10em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
   }
   .news-source::after {
     content: '|';
