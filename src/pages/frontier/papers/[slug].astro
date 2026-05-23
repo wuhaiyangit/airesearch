@@ -39,7 +39,6 @@ const { title, authors, year, category, abstract, tags = [], Content } = paper;
         <span class="year-badge">{year}</span>
       </div>
       <h1>{title}</h1>
-      <p class="authors">作者：{authors}</p>
       {tags.length > 0 && (
         <div class="tags">
           {tags.map((tag: string) => <span class="tag">{tag}</span>)}
