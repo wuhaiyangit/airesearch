@@ -5,7 +5,7 @@ affiliation: "Alibaba (Taobao & Tmall Group), Fudan University, Tsinghua Univers
 year: "2026"
 venue: "arXiv preprint"
 category: "生成式推荐"
-abstract: "淘宝搜索团队提出 TaoSR1——首个直接在工业搜索系统中在线部署 LLM 的相关性判断框架，通过 SFT+CoT → Pass@N-DPO → Difficulty-based GRPO >    三阶段优化，配合"先回答后推理"(post-CoT) 范式和累积概率分层 (CumPT)，在复杂长尾查询上 Macro-F1 相对 baseline 提升 4.9 个百分点，线上人工评测 GSB 最高     +34.43%。"
+abstract: "淘宝搜索团队提出 TaoSR1——首个直接在工业搜索系统中在线部署 LLM 的相关性判断框架，通过 SFT+CoT → Pass@N-DPO → Difficulty-based GRPO >    三阶段优化，配合 先回答后推理(post-CoT) 范式和累积概率分层 (CumPT)，在复杂长尾查询上 Macro-F1 相对 baseline 提升 4.9 个百分点，线上人工评测 GSB 最高     +34.43%。"
 tags: ["大规模GR"]
 RecRatio: "9"
 Team: "alibaba"
