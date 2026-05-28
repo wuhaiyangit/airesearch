@@ -25,10 +25,12 @@ const directions = [
 ];
 
 // 方向 category 到 id 的映射
+// 兼容历史 / 新版两种写法：『其他方向』『其他进展』均归入 other
 const categoryMap: Record<string, string> = {
   '推荐系统': 'rec',
   '大语言模型': 'llm',
   '其他方向': 'other',
+  '其他进展': 'other',
 };
 
 // 知识类别颜色映射
@@ -174,7 +176,7 @@ const techColumns = [
                   {day.title && (
                     <div class="day-headline">
                       <h3 class="day-title">{day.title}</h3>
-                      {day.description && <p class="day-description">{day.description}</p>}
+                      {/* description 不在页面上显示，仅保留在 markdown frontmatter 里供检索/SEO 用 */}
                     </div>
                   )}
                 </div>
@@ -663,7 +665,8 @@ const techColumns = [
     color: var(--text-subtle);
     white-space: nowrap;
     flex-shrink: 0;
-    max-width: 10em;
+    /* 放宽到约 15 个汉字（英文 / 数字字符更窄，可容纳更多） */
+    max-width: 15em;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
@@ -965,6 +968,6 @@ const techColumns = [
     .tab { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
     .paper-row, .article-row { flex-direction: column; }
     .paper-side, .article-side { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 0.5rem; }
-    .news-source { min-width: 5rem; max-width: 6rem; }
+    .news-source { min-width: 5rem; max-width: 9rem; }
   }
 </style>
