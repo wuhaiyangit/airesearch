@@ -1,23 +1,24 @@
-# TaoSR1: The Thinking Model for E-commerce Relevance Search
+---
+title: "TaoSR1: The Thinking Model for E-commerce Relevance Search"
+authors: "Chenhe Dong, Shaowei Yao, Pengkun Jiao, Jianhui Yang, Yiming Jin, Zerui Huang, Xiaojiang Zhou, Dan Ou, Haihong Tang, Bo Zheng"
+affiliation: "Alibaba (Taobao & Tmall Group), Fudan University, Tsinghua University"
+year: "2026"
+venue: "arXiv preprint"
+category: "生成式推荐"
+abstract: "淘宝搜索团队提出 TaoSR1——首个直接在工业搜索系统中在线部署 LLM 的相关性判断框架，通过 SFT+CoT → Pass@N-DPO → Difficulty-based GRPO >    三阶段优化，配合"先回答后推理"(post-CoT) 范式和累积概率分层 (CumPT)，在复杂长尾查询上 Macro-F1 相对 baseline 提升 4.9 个百分点，线上人工评测 GSB 最高     +34.43%。"
+tags: ["大规模GR"]
+RecRatio: "9"
+Team: "alibaba"
+精读日期: "2026-05-25"
+---
 
-## 1. 元信息
+## 1. 背景与动机
 
-| 字段 | 内容 |
-|------|------|
-| **标题** | TaoSR1: The Thinking Model for E-commerce Relevance Search |
-| **作者** | Chenhe Dong, Shaowei Yao, Pengkun Jiao, Jianhui Yang, Yiming Jin, Zerui Huang, Xiaojiang Zhou, Dan Ou, Haihong Tang, Bo Zheng |
-| **机构** | Alibaba (Taobao & Tmall Group), Fudan University, Tsinghua University |
-| **会议** | 预印本（投稿中）|
-| **关键词** | E-commerce Relevance Search, Large Language Models, Chain-of-Thought, Reinforcement Learning, GRPO, DPO, Online Deployment |
-| **一句话总结** | 淘宝搜索团队提出 TaoSR1——首个直接在工业搜索系统中在线部署 LLM 的相关性判断框架，通过 SFT+CoT → Pass@N-DPO → Difficulty-based GRPO 三阶段优化，配合"先回答后推理"(post-CoT) 范式和累积概率分层 (CumPT)，在复杂长尾查询上 Macro-F1 相对 baseline 提升 4.9 个百分点，线上人工评测 GSB 最高 +34.43%。 |
-
-## 2. 背景与动机
-
-### 2.1 领域现状
+### 1.1 领域现状
 
 电商搜索相关性预测是搜索引擎的基础技术，负责确保返回商品与用户查询的语义匹配。现有方法主要依赖 BERT-based 模型，其编码器架构和双向注意力机制在文本匹配任务上表现优异，可满足 80-90% 的搜索需求。然而，剩余 10%+ 的长尾复杂查询（否定查询、平替需求、问答类查询、知识推理类查询）对模型的语义理解和推理能力提出了更高要求。
 
-### 2.2 未解决的关键问题
+### 1.2 未解决的关键问题
 
 将 LLM 直接部署到工业搜索的相关性判断面临三大挑战：
 
@@ -27,17 +28,17 @@
 
 3. **判别幻觉 (Discriminative Hallucination)**：即使推理链正确，模型仍可能输出错误的最终答案——推理过程与分类结论不一致。
 
-### 2.3 本文目标
+### 1.3 本文目标
 
 设计一个可直接在线部署的 LLM 相关性优化框架 TaoSR1，通过多阶段训练策略解决上述三大挑战，使 LLM 首次在工业电商搜索系统中直接服务。
 
-## 3. 核心方法
+## 2. 核心方法
 
-### 3.1 任务定义
+### 2.1 任务定义
 
 电商搜索相关性为四分类问题：4-Excellent、3-Related、2-Mismatch、1-Irrelevant。线上按 Good/Mid/Bad 三层分层排序。
 
-### 3.2 阶段一：SFT with CoT
+### 2.2 阶段一：SFT with CoT
 
 **生成式训练范式**：不同于判别式训练（MSE/CE loss），采用生成式目标直接生成标签文本：
 
@@ -51,7 +52,7 @@ $$P(y_1=c|x) = \frac{\exp(\pi(x)_{\text{id}(c)})}{\sum_{j=1}^{4}\exp(\pi(x)_{\te
 
 **Post-CoT 范式**：对比"先思后答" (<CoT, label>) 和"先答后思" (<label, CoT>) 两种范式。发现"先思后答"因 CoT 错误累积反而低于判别式 baseline；"先答后思"避免错误传播，性能显著恢复。
 
-### 3.3 阶段二：Pass@N-based DPO
+### 2.3 阶段二：Pass@N-based DPO
 
 通过离线多次采样发现模型 pass@N 准确率远高于单次解码（pass@5=81.73% vs pass@1=67.38%），表明 RL 优化空间巨大。构建偏好数据集：
 
@@ -62,7 +63,7 @@ DPO 损失：
 
 $$\mathcal{L}_{\text{DPO}}(\pi_\theta;\pi_{\text{ref}}) = -\mathbb{E}_{(x,y_w,y_l)\sim D}\left[\log\sigma\left(\beta\log\frac{\pi_\theta(y^+|x)}{\pi_{\text{ref}}(y^+|x)} - \beta\log\frac{\pi_\theta(y^-|x)}{\pi_{\text{ref}}(y^-|x)}\right)\right]$$
 
-### 3.4 阶段三：GRPO with Difficulty-based Sampling
+### 2.4 阶段三：GRPO with Difficulty-based Sampling
 
 受 DAPO 启发，提出难度感知动态采样策略：
 
@@ -72,7 +73,7 @@ $$\mathcal{L}_{\text{GRPO}}(\theta) = \mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\
 
 **关键发现**：训练数据标签分布的变异系数(CV)与最终性能强负相关。采用类别均衡下采样 + 最小拒绝采样（仅丢弃全对/全错批次），以更少数据实现更优性能。判别幻觉相比 DPO 降低 30%。
 
-### 3.5 Cumulative Probability Tiering (CumPT)
+### 2.5 Cumulative Probability Tiering (CumPT)
 
 将传统多阈值分层（需 4+ 超参数）简化为单一超参数 $\beta_{\text{cum}}$：
 
@@ -80,7 +81,7 @@ $$\mathcal{L}_{\text{GRPO}}(\theta) = \mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\
 
 CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12），消除了传统方法中繁琐的超参搜索。
 
-### 3.6 在线部署优化
+### 2.6 在线部署优化
 
 基础模型为 Tbstar-42B（MoE 架构，3.5B 激活参数）。工程优化包括：
 - 按序列长度动态分批，均衡计算负载
@@ -89,15 +90,15 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 
 优化后平均 RT 从 800ms 降至 286ms，MFU 达 46.2%。Post-CoT 范式仅需优化 prefill 延迟，无需额外 decoding 开销。
 
-## 4. 实验设计
+## 3. 实验设计
 
-### 4.1 数据集
+### 3.1 数据集
 
 - 来自淘宝在线搜索日志，约 70,000 条人工标注 query-item 对
 - 查询分布聚焦四类困难场景：否定查询、平替查询、QA 查询、知识推理查询
 - 标签分布：L4(50%), L3(5%), L2(36%), L1(9%)
 
-### 4.2 基线方法
+### 3.2 基线方法
 
 | 模型 | 说明 |
 |------|------|
@@ -106,14 +107,14 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 | Qwen3-30B-A3B | 开源 MoE，30B total / 3B active |
 | LLM base | Tbstar-42B (3.5B active) SFT，最强 baseline |
 
-### 4.3 评价指标
+### 3.3 评价指标
 
 - **离线**: Macro-F1, 各类 F1, Accuracy
 - **线上**: GSB (Good/Same/Bad 人工对比), Query Goodrate, Item Goodrate
 
-## 5. 关键结果
+## 4. 关键结果
 
-### 5.1 离线评测
+### 4.1 离线评测
 
 | Models | Class-1 F1 | Class-2 F1 | Class-3 F1 | Class-4 F1 | Macro F1 | Accuracy |
 |--------|-----------|-----------|-----------|-----------|----------|----------|
@@ -127,17 +128,17 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 
 最终模型相比 LLM base：Macro-F1 +4.9pt，Class-3(最难类) F1 +12.03pt。
 
-### 5.2 Pass@N 验证
+### 4.2 Pass@N 验证
 
 | Pass@N | 1 | 2 | 3 | 4 | 5 |
 |--------|---|---|---|---|---|
 | Accuracy | 67.38 | 74.26 | 77.68 | 80.18 | 81.73 |
 
-### 5.3 Difficulty Ratio 消融
+### 4.3 Difficulty Ratio 消融
 
 标签均衡采样（CV=0）在使用最少数据的情况下达到最优 Macro-F1=67.12。
 
-### 5.4 线上人工评测
+### 4.4 线上人工评测
 
 | Query Type | GSB | Query Goodrate | Item Goodrate |
 |-----------|-----|---------------|--------------|
@@ -148,7 +149,7 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 
 线上 A/B 测试：UV +0.22%, IPV +2.43%, Transaction +0.82%。
 
-## 6. 优势与局限
+## 5. 优势与局限
 
 ### 优势
 
@@ -166,7 +167,7 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 4. **GMV 微降 -0.29%**：优化相关性可能牺牲了部分商业化指标
 5. **未讨论多语言/跨域迁移**：仅在淘宝中文搜索场景验证
 
-## 7. 对工作的启发
+## 6. 对工作的启发
 
 1. **分类任务的 RL 范式**：TaoSR1 系统验证了 RL（DPO+GRPO）在生成式分类任务中的有效性，为《生成式推荐》书中"强化学习对齐"章节提供了从推荐到搜索的延伸案例
 
@@ -178,7 +179,7 @@ CumPT 使 Online Macro F1 与 Offline Macro F1 几乎一致（67.17 vs 67.12）�
 
 5. **工业部署的工程范式**：FP8 + 前缀共享 + 跨机房调度的组合优化方案，为大模型推荐系统的线上 serving 提供了实用参考
 
-## 8. 参考文献精选
+## 7. 参考文献精选
 
 | 文献 | 与本文关系 |
 |------|-----------|

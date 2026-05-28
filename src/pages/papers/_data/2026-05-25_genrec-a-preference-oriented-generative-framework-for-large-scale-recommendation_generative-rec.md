@@ -1,23 +1,24 @@
-# GenRec: A Preference-Oriented Generative Framework for Large-Scale Recommendation
+---
+title: "GenRec: A Preference-Oriented Generative Framework for Large-Scale Recommendation"
+authors: "Yanyan Zou, Junbo Qi, Lunsong Huang, Yu Li, Kewei Xu, Jiahao Gao, Binglei Zhao, Xuanhua Yang, Sulong Xu, Shengjie Li"
+affiliation: "JD.com, Waseda University "
+year: "2026"
+venue: "arXiv preprint"
+category: "生成式推荐"
+abstract: "JD.com 提出 GenRec——面向工业级推荐的偏好导向生成框架，通过 Page-wise NTP（解决一对多歧义）、Token Merger（2x 序列压缩）和 GRPO-SR >    混合奖励 RL（防止 reward hacking），在京东首页信息流推荐线上 A/B 测试中实现点击量 +9.5%、成交量 +8.7% 的显著提升。"
+tags: ["大规模GR"]
+RecRatio: "9"
+Team: "JD"
+精读日期: "2026-05-25"
+---
 
-## 1. 元信息
+## 1. 背景与动机
 
-| 字段 | 内容 |
-|------|------|
-| **标题** | GenRec: A Preference-Oriented Generative Framework for Large-Scale Recommendation |
-| **作者** | Yanyan Zou, Junbo Qi, Lunsong Huang, Yu Li, Kewei Xu, Jiahao Gao, Binglei Zhao, Xuanhua Yang, Sulong Xu, Shengjie Li |
-| **机构** | JD.com, Waseda University |
-| **会议** | SIGIR 2026 (Melbourne, Australia) |
-| **关键词** | Generative Retrieval, Large-scale Recommender System, Supervised Fine-tuning, Preference Alignment, Semantic ID, GRPO |
-| **一句话总结** | JD.com 提出 GenRec——面向工业级推荐的偏好导向生成框架，通过 Page-wise NTP（解决一对多歧义）、Token Merger（2x 序列压缩）和 GRPO-SR 混合奖励 RL（防止 reward hacking），在京东首页信息流推荐线上 A/B 测试中实现点击量 +9.5%、成交量 +8.7% 的显著提升。 |
-
-## 2. 背景与动机
-
-### 2.1 领域现状
+### 1.1 领域现状
 
 现代推荐系统通常采用"检索-排序"多阶段架构。近年来，生成式检索（Generative Retrieval, GR）范式展现了将检索任务统一为条件序列生成问题的潜力——给定用户历史行为序列，模型通过 Next-Token Prediction (NTP) 直接从全语料中生成目标 item。TIGER、LC-Rec、OneRec 等工作已初步验证了该范式的有效性。
 
-### 2.2 未解决的关键问题
+### 1.2 未解决的关键问题
 
 将 GR 部署到大规模工业推荐系统时面临三大核心挑战：
 
@@ -27,19 +28,19 @@
 
 3. **偏好对齐中的 Reward Hacking**：朴素的 RL 对齐容易被模型利用，生成语法上合法但语义无关的 SID 组合以获取高奖励。
 
-### 2.3 本文目标
+### 1.3 本文目标
 
 设计一个统一的 decoder-only 生成推荐框架 GenRec，在单一架构内同时解决上述三个挑战：训练时用 page-wise 监督提供更密集梯度信号，推理时用 Token Merger 压缩序列长度，并通过 GRPO-SR + 混合奖励实现稳定的偏好对齐。
 
-## 3. 核心方法
+## 2. 核心方法
 
-### 3.1 Semantic ID 构建
+### 2.1 Semantic ID 构建
 
 采用多模态模型 Qwen2.5-VL 联合编码 item 的视觉外观与文本描述，再通过领域协同对（collaborative pairs）微调 embedding 模型，最后用 RQ K-means 量化为层次化离散 ID：
 
 $$\text{SID}(v_i) = \{s_i^1, s_i^2, s_i^3\}$$
 
-### 3.2 Page-Wise NTP (PW-NTP) SFT
+### 2.2 Page-Wise NTP (PW-NTP) SFT
 
 **输入构造**：将用户历史行为序列的 SID 按时序拼接：
 
@@ -55,7 +56,7 @@ $$\mathcal{L}_{\text{SFT}} = -\sum_{t=1}^{|Y_{\text{page}}|} \log P_\theta(y_t |
 
 **推理时**：仍使用 point-wise beam search，与生产 pipeline 兼容。这种训练-推理不对称设计使模型获得更丰富的梯度信号，同时保持线上 serving 的简洁性。
 
-### 3.3 Token Merger
+### 2.3 Token Merger
 
 SID 三元组来自同一 item，因此在 prefilling 阶段通过线性投影将三个 embedding 合并为一个：
 
@@ -63,7 +64,7 @@ $$\mathbf{h}_{v_i} = \text{Linear}(\text{Concat}(\mathbf{e}(s_i^1), \mathbf{e}(s
 
 这将 prompt 长度压缩约 2x，特殊分隔 token 保持不压缩。**仅在 prefilling 阶段压缩**，decoding 阶段仍生成完整 SID token 序列以保证检索精度。
 
-### 3.4 GRPO-SR 偏好对齐
+### 2.4 GRPO-SR 偏好对齐
 
 #### 奖励公式
 
@@ -82,34 +83,34 @@ $$\mathcal{L}_{\text{GRPO-SR}}(\theta) = -\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^
 
 第一项为 importance sampling 形式的策略优化；第二项为 NLL 正则化，显式锚定策略到真实用户行为，替代标准 KL 散度惩罚，避免过度优化。
 
-## 4. 实验设计
+## 3. 实验设计
 
-### 4.1 数据集
+### 3.1 数据集
 
 来自 JD.com 大规模推荐平台，覆盖约 5.6 亿用户交互序列（一个月数据），最后一天为测试集，其余为训练集。
 
-### 4.2 基线方法
+### 3.2 基线方法
 
 | 类别 | 方法 |
 |------|------|
 | 传统方法 | BERT4Rec, SASRec |
 | 生成方法 | TIGER (NeurIPS 2023), LC-Rec (ICDE 2024) |
 
-### 4.3 评价指标
+### 3.3 评价指标
 
 - HitRate@K (HR@K)
 - NDCG@K (N@K)
 - Hallucination Rate (HaR): 生成无效 SID 的比例
 - Reward Metric (R@K): RL 阶段的 SIM 奖励分数
 
-### 4.4 实验设置
+### 3.4 实验设置
 
 - 骨干模型: Qwen2.5 (1.5B / 3B / 7B)
 - 训练: 8× NVIDIA H100 GPU，AdamW 优化器，1% warm-up + cosine decay
 
-## 5. 关键结果
+## 4. 关键结果
 
-### 5.1 主实验结果
+### 4.1 主实验结果
 
 | Model | HR@1 | HR@10 | N@10 | HR@50 | N@50 | HaR↓ |
 |-------|------|-------|------|-------|------|------|
@@ -122,7 +123,7 @@ $$\mathcal{L}_{\text{GRPO-SR}}(\theta) = -\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^
 
 GenRec 相比 LC-Rec 在 HR@50 上提升 15.5%，HaR 下降 36.4%。Token Merger 去除后性能几乎不变，证明压缩不损失精度。
 
-### 5.2 Scaling Law
+### 4.2 Scaling Law
 
 | Model Size | HR@1 | HR@10 | N@10 | HR@50 | N@50 | HaR↓ |
 |-----------|------|-------|------|-------|------|------|
@@ -132,7 +133,7 @@ GenRec 相比 LC-Rec 在 HR@50 上提升 15.5%，HaR 下降 36.4%。Token Merger
 
 3B→7B 的增益边际递减，作者认为 3B 模型更深更窄（36 layers, 2048 hidden）比 7B（28 layers, 3584 hidden）更适合推荐任务，验证了"capacity density"假说。
 
-### 5.3 RL 对齐结果
+### 4.3 RL 对齐结果
 
 | Model | HR@50 | R@1 | R@10 | R@50 | HaR↓ |
 |-------|-------|-----|------|------|------|
@@ -143,7 +144,7 @@ GenRec 相比 LC-Rec 在 HR@50 上提升 15.5%，HaR 下降 36.4%。Token Merger
 
 GRPO-SR 在 R@1 上相对 SFT 提升 18.01%，同时 HaR 降至 2.68%。去除 Gate 导致 HR@50 下降 + reward 提升 = 典型 reward hacking。
 
-### 5.4 线上 A/B 测试
+### 4.4 线上 A/B 测试
 
 | Setting | Exposure Rate | Click Count | Transaction Count |
 |---------|--------------|-------------|-------------------|
@@ -152,7 +153,7 @@ GRPO-SR 在 R@1 上相对 SFT 提升 18.01%，同时 HaR 降至 2.68%。去除 G
 
 长尾 item 表现更佳：曝光率 +10%，点击量 +16%，成交量 +13%。GenRec with GRPO-SR 已全量上线。
 
-## 6. 优势与局限
+## 5. 优势与局限
 
 ### 优势
 
@@ -170,7 +171,7 @@ GRPO-SR 在 R@1 上相对 SFT 提升 18.01%，同时 HaR 降至 2.68%。去除 G
 4. **RL 阶段的计算成本**（rollout 数量、训练时长）未详细报告
 5. **未讨论新 item 冷启动**时 SID 的更新策略
 
-## 7. 对工作的启发
+## 6. 对工作的启发
 
 1. **PW-NTP 范式创新**：为《生成式推荐》书中"训练目标设计"章节提供了从 point-wise 到 page-wise 的演进路径，揭示了工业分页机制对生成式推荐的独特约束
 2. **Token Merger 的通用性**：压缩多 token SID 的思路可推广到所有使用 RQ-based 编码的生成式推荐系统，是效率优化的关键技术
@@ -178,7 +179,7 @@ GRPO-SR 在 R@1 上相对 SFT 提升 18.01%，同时 HaR 降至 2.68%。去除 G
 4. **Scaling Law 的"capacity density"发现**：对推荐场景下模型选型提供了反直觉的经验——更深更窄可能优于更宽更浅
 5. **Reward Hacking 防护机制**：Gate + 正样本校准的组合方案，是 RL-for-Rec 的重要工程实践
 
-## 8. 参考文献精选
+## 7. 参考文献精选
 
 | 文献 | 与本文关系 |
 |------|-----------|
